@@ -1,26 +1,16 @@
 import React from 'react';
-import {
-    View,
-    Text,
-    Modal,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity,
-    Animated,
-} from 'react-native';
+import { View, Text, Modal, StyleSheet, Dimensions, TouchableOpacity, Animated } from 'react-native';
 
 function Prompt(props, ref) {
     const { onCancelPress } = props;
     const [_visible, _setVisible] = React.useState(false);
     const [visible, setVisible] = React.useState(false);
-    const [hintText, setHintText] = React.useState('');
     const animValue = React.useRef(new Animated.Value(0)).current;
 
     React.useEffect(() => {
         if (ref) {
             ref.current = {
                 setVisible: _setVisible,
-                setHintText,
             };
         }
     }, [ref]);
@@ -40,7 +30,6 @@ function Prompt(props, ref) {
                 useNativeDriver: true,
             }).start(() => {
                 setVisible(false);
-                setHintText('');
             });
         }
     }, [_visible, animValue]);
@@ -63,16 +52,10 @@ function Prompt(props, ref) {
     return (
         <Modal visible={visible} transparent={true}>
             <View style={styles.content}>
-                <Animated.View
-                    style={[
-                        styles.backdrop,
-                        StyleSheet.absoluteFill,
-                        backdropAnimStyle,
-                    ]}
-                />
+                <Animated.View style={[styles.backdrop, StyleSheet.absoluteFill, backdropAnimStyle]} />
 
                 <Animated.View style={[styles.prompt, promptAnimeStyle]}>
-                    <Text style={styles.hint}>{hintText || 'Hello NFC!'}</Text>
+                    <Text style={styles.hint}>{'Waiting for scan...'}</Text>
 
                     <TouchableOpacity
                         style={styles.btn}

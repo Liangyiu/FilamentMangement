@@ -1,7 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 import NfcManager from 'react-native-nfc-manager';
-import Game from './Game';
+import NavStack from './NavStack';
+import Home from './Home';
 
 function App(props) {
     const [hasNfc, setHasNfc] = React.useState(null);
@@ -50,7 +54,13 @@ function App(props) {
         );
     }
 
-    return <Game />;
+    return (
+        <ApplicationProvider {...eva} theme={eva.dark}>
+            <NavigationContainer>
+                <NavStack />
+            </NavigationContainer>
+        </ApplicationProvider>
+    );
 }
 
 const styles = StyleSheet.create({
