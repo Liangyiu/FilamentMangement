@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+import { ApplicationProvider } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import NfcManager from 'react-native-nfc-manager';
-import NavStack from './NavStack';
-import Home from './Home';
+import AppNavigation from './components/AppNavigation';
+import { IconRegistry } from '@ui-kitten/components/ui';
 
 function App(props) {
     const [hasNfc, setHasNfc] = React.useState(null);
@@ -29,37 +30,38 @@ function App(props) {
     } else if (!hasNfc) {
         return (
             <View style={styles.wrapper}>
-                <Text>Your device does not support NFC!</Text>
+                <Text style={styles.h3}>Your device does not support NFC!</Text>
             </View>
         );
     } else if (!enabled) {
         return (
             <View style={styles.wrapper}>
-                <Text>NFC is disabled!</Text>
+                <Text style={styles.h3}>NFC is disabled!</Text>
 
-                <TouchableOpacity
+                <Button
                     onPress={() => {
                         NfcManager.goToNfcSetting();
-                    }}>
-                    <Text>Go to Settings</Text>
-                </TouchableOpacity>
+                    }}
+                    title="Go to Settings"></Button>
 
-                <TouchableOpacity
+                <Text style={{ marginVertical: 1.5 }}></Text>
+
+                <Button
                     onPress={async () => {
                         setEnabled(await NfcManager.isEnabled());
-                    }}>
-                    <Text>Check again</Text>
-                </TouchableOpacity>
+                    }}
+                    title="Check again"></Button>
             </View>
         );
     }
 
     return (
-        <ApplicationProvider {...eva} theme={eva.dark}>
-            <NavigationContainer>
-                <NavStack />
-            </NavigationContainer>
-        </ApplicationProvider>
+        <>
+            <IconRegistry icons={EvaIconsPack} />
+            <ApplicationProvider {...eva} theme={eva.dark}>
+                <AppNavigation />
+            </ApplicationProvider>
+        </>
     );
 }
 
@@ -68,6 +70,18 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    h3: {
+        fontSize: 22,
+        marginTop: 15,
+        marginBottom: 15,
+        marginLeft: 0,
+        marginRight: 0,
+        fontWeight: 'bold',
+    },
+    btn: {
+        marginTop: 15,
+        marginBottom: 15,
     },
 });
 
