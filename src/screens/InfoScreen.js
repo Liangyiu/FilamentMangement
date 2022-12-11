@@ -1,9 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import Prompt from './Prompt';
+import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import Prompt from '../components/Prompt';
 import NfcManager, { NfcEvents, NfcTech } from 'react-native-nfc-manager';
+import { Icon, TopNavigationAction, TopNavigation, Divider, Layout, Text, Button } from '@ui-kitten/components';
+
+const BackIcon = props => <Icon {...props} name="arrow-back" />;
 
 function InfoScreen({ navigation }) {
+    const navigateBack = () => {
+        navigation.goBack();
+    };
+
+    const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
+
     const promptRef = React.useRef();
     let tag = undefined;
 
@@ -37,17 +46,21 @@ function InfoScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.wrapper}>
-            <TouchableOpacity style={styles.btn} onPress={scanTag}>
-                <Text>Scan Tag</Text>
-            </TouchableOpacity>
-            <Prompt
-                ref={promptRef}
-                onCancelPress={() => {
-                    NfcManager.cancelTechnologyRequest();
-                }}
-            />
-        </View>
+        <>
+            <TopNavigation title="Scan your Tag" alignment="center" accessoryLeft={BackAction} />
+            <Divider />
+            <Layout style={styles.wrapper}>
+                <Button appearance="outline" onPress={scanTag}>
+                    Scan Tag
+                </Button>
+                <Prompt
+                    ref={promptRef}
+                    onCancelPress={() => {
+                        NfcManager.cancelTechnologyRequest();
+                    }}
+                />
+            </Layout>
+        </>
     );
 }
 
@@ -56,7 +69,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#d3d3d3'
     },
     btn: {
         margin: 15,
