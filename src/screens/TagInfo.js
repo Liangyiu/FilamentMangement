@@ -47,8 +47,8 @@ function TagInfo({ navigation, route }) {
                 setDiameter(tagInfo.diameter);
                 setLastDried(new Date(tagInfo.lastDried));
                 setOpeningDate(new Date(tagInfo.openingDate));
-                setProducer(tagInfo.producer);
-                setWeight(tagInfo.weight);
+                setProducer(tagInfo.producer.name);
+                setWeight(tagInfo.weight - tagInfo.producer.emptyWeight);
             } catch (e) {
                 console.log(e);
             }
@@ -56,7 +56,6 @@ function TagInfo({ navigation, route }) {
 
         if (id === 'none' && color === 'none' && producer === 'none'){
             getData(route.params.tagId);
-            console.log("call");
         }
     });
 
@@ -71,13 +70,13 @@ function TagInfo({ navigation, route }) {
             <TopNavigation title={'Info for filament ' + id}  alignment="center" accessoryLeft={BackAction} />
             <Divider />
             <Layout style={styles.wrapper}>
-                <Input style={styles.input} label="Id" value={id} />
-                <Input style={styles.input} label="Color" value={color} />
-                <Input style={styles.input} label="Diameter" value={diameter.toString() + ' mm'} />
-                <Input style={styles.input} label="Producer" value={producer} />
-                <Input style={styles.input} label="Weight" value={weight.toString() + ' g'} />
-                <Input style={styles.input} label="Opening Date" value={openingDate.toString()} />
-                <Input style={styles.input} label="Last Dried" value={lastDried.toString()} />
+                <Input style={styles.input} disabled={true} label="Id" value={id} />
+                <Input style={styles.input} disabled={true} label="Color" value={color} />
+                <Input style={styles.input} disabled={true} label="Diameter" value={diameter.toString() + ' mm'} />
+                <Input style={styles.input} disabled={true} label="Producer" value={producer} />
+                <Input style={styles.input} disabled={true} label="Weight" value={weight.toString() + ' g'} />
+                <Input style={styles.input} disabled={true} label="Opening Date" value={openingDate.toString()} />
+                <Input style={styles.input} disabled={true} label="Last Dried" value={lastDried.toString()} />
             </Layout>
         </>
     );
