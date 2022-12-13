@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
 import NfcManager, { NfcEvents, NfcTech } from 'react-native-nfc-manager';
 import { Button, Input, TopNavigation, Divider, TopNavigationAction, Icon, Layout } from '@ui-kitten/components';
 import axios from 'axios';
@@ -54,7 +54,7 @@ function TagInfo({ navigation, route }) {
             }
         }
 
-        if (id === 'none' && color === 'none' && producer === 'none'){
+        if (id === 'none' && color === 'none' && producer === 'none') {
             getData(route.params.tagId);
         }
     });
@@ -67,17 +67,19 @@ function TagInfo({ navigation, route }) {
 
     return (
         <>
-            <TopNavigation title={'Info for filament ' + id}  alignment="center" accessoryLeft={BackAction} />
+            <TopNavigation title={'Info for filament ' + id} alignment="center" accessoryLeft={BackAction} />
             <Divider />
-            <Layout style={styles.wrapper}>
-                <Input style={styles.input} disabled={true} label="Id" value={id} />
-                <Input style={styles.input} disabled={true} label="Color" value={color} />
-                <Input style={styles.input} disabled={true} label="Diameter" value={diameter.toString() + ' mm'} />
-                <Input style={styles.input} disabled={true} label="Producer" value={producer} />
-                <Input style={styles.input} disabled={true} label="Weight" value={weight.toString() + ' g'} />
-                <Input style={styles.input} disabled={true} label="Opening Date" value={openingDate.toString()} />
-                <Input style={styles.input} disabled={true} label="Last Dried" value={lastDried.toString()} />
-            </Layout>
+            <ScrollView contentContainerStyle={styles.container} endFillColor='#222B45'>
+                <Layout style={styles.wrapper}>
+                    <Input style={styles.input} disabled={true} label="Id" value={id} />
+                    <Input style={styles.input} disabled={true} label="Color" value={color} />
+                    <Input style={styles.input} disabled={true} label="Diameter" value={diameter.toString() + ' mm'} />
+                    <Input style={styles.input} disabled={true} label="Producer" value={producer} />
+                    <Input style={styles.input} disabled={true} label="Weight (w/o empty spool)" value={weight.toString() + ' g'} />
+                    <Input style={styles.input} disabled={true} label="Opening Date" value={openingDate.toString()} />
+                    <Input style={styles.input} disabled={true} label="Last Dried" value={lastDried.toString()} />
+                </Layout>
+            </ScrollView>
         </>
     );
 }
@@ -87,11 +89,14 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 20
+        paddingHorizontal: 35,
     },
-    input : {
+    container: {
+        flexGrow: 1
+    },
+    input: {
         marginVertical: 5,
-    }
+    },
 });
 
 export default TagInfo;

@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screens/Home';
 import TagInfo from '../screens/TagInfo';
 import NewProducer from '../screens/NewProducer';
+import NewFilament from '../screens/NewFilament';
+import UpdateFilament from '../screens/UpdateFilament';
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -13,6 +15,8 @@ function AppNavigation() {
                 <Screen name="Home" component={Home} />
                 <Screen name="TagInfo" component={TagInfo} />
                 <Screen name="NewProducer" component={NewProducer} />
+                <Screen name="NewFilament" component={NewFilament} />
+                <Screen name="UpdateFilament" component={UpdateFilament} />
             </Navigator>
         </NavigationContainer>
     );

@@ -166,7 +166,7 @@ function NewProducer({ navigation, route }) {
                     placeholder="250"
                     value={emptySpoolWeight}
                 />
-                <Button onPress={addProducer}>Add</Button>
+                <Button style={styles.btn} onPress={addProducer}>Add</Button>
             </Layout>
 
             <Modal visible={visible} backdropStyle={styles.backdrop} onBackdropPress={() => setVisible(false)}>
@@ -174,7 +174,7 @@ function NewProducer({ navigation, route }) {
                     <Text style={styles.alertText} category="h6">
                         {modalText}
                     </Text>
-                    <Button onPress={() => setVisible(false)}>Dismiss</Button>
+                    <Button style={styles.btn} onPress={() => setVisible(false)}>Dismiss</Button>
                 </Card>
             </Modal>
         </>
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: 35,
     },
     input: {
         marginVertical: 5,
@@ -194,12 +194,13 @@ const styles = StyleSheet.create({
     backdrop: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    icon: {
-        height: 30,
-        width: 30,
-    },
     alertText: {
         marginBottom: 10,
+    },
+    btn: {
+        margin: 8,
+        padding: 8,
+        borderRadius: 8,
     },
 });
 
