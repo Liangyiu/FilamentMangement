@@ -6,6 +6,7 @@ import NfcManager, { NfcEvents, NfcTech } from 'react-native-nfc-manager';
 import Prompt from '../components/Prompt';
 
 function Home({ navigation }) {
+    const [nfcReader, updateNfc] = React.useState(false);
     const promptRef = React.useRef();
     let tag = undefined;
 
@@ -16,7 +17,7 @@ function Home({ navigation }) {
 
             return tag.id;
         } catch (ex) {
-            console.warn('Oops!', ex);
+            updateNfc(!nfcReader);
         } finally {
             NfcManager.cancelTechnologyRequest();
         }
@@ -34,7 +35,15 @@ function Home({ navigation }) {
         }
 
         if (tag && option === 'info') {
-            navigation.navigate('TagInfo', { tagId: tag });
+            return navigation.navigate('TagInfo', { tagId: tag });
+        }
+
+        if (tag && option === 'newFilament') {
+            return navigation.navigate('NewFilament', { tagId: tag });
+        }
+
+        if (tag && option === 'updateFilament') {
+            return navigation.navigate('UpdateFilament', { tagId: tag });
         }
     }
 
@@ -44,16 +53,32 @@ function Home({ navigation }) {
             <Divider />
             <Layout level="4" style={styles.wrapper}>
                 <Button
+                    style={styles.btn}
                     onPress={() => {
                         scanTag('info');
                     }}>
                     Show Info
                 </Button>
                 <Button
+                    style={styles.btn}
+                    onPress={() => {
+                        scanTag('newFilament');
+                    }}>
+                    Add Filament
+                </Button>
+                <Button
+                    style={styles.btn}
+                    onPress={() => {
+                        scanTag('updateFilament');
+                    }}>
+                    Update Filament
+                </Button>
+                <Button
+                    style={styles.btn}
                     onPress={() => {
                         navigation.navigate('NewProducer');
                     }}>
-                    Add a new Filament-Producer
+                    Add Filament-Producer
                 </Button>
                 <Prompt
                     ref={promptRef}
@@ -73,10 +98,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     btn: {
-        margin: 15,
-        padding: 15,
+        margin: 8,
+        padding: 8,
         borderRadius: 8,
-        backgroundColor: '#000000',
     },
 });
 
