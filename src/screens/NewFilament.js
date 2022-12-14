@@ -310,7 +310,6 @@ function NewFilament({ navigation, route }) {
                             <Button
                                 style={styles.btn}
                                 onPress={() => {
-                                    setUpdatePressed(true);
                                     setVisibleOne(false);
                                     navigation.navigate('UpdateFilament', {
                                         tagId: route.params.tagId,
@@ -319,7 +318,7 @@ function NewFilament({ navigation, route }) {
                                         producer: producer,
                                         diameter: diameter,
                                         lastDried: lastDried,
-                                        opened: openingDate,
+                                        openingDate: openingDate,
                                     });
                                 }}>
                                 Update

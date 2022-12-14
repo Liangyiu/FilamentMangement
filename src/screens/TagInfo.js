@@ -47,7 +47,7 @@ function TagInfo({ navigation, route }) {
                 setDiameter(tagInfo.diameter);
                 setLastDried(new Date(tagInfo.lastDried));
                 setOpeningDate(new Date(tagInfo.openingDate));
-                setProducer(tagInfo.producer.name);
+                setProducer(tagInfo.producer._id);
                 setWeight(tagInfo.weight - tagInfo.producer.emptyWeight);
             } catch (e) {
                 console.log(e);

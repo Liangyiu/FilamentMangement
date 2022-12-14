@@ -41,10 +41,6 @@ function Home({ navigation }) {
         if (tag && option === 'newFilament') {
             return navigation.navigate('NewFilament', { tagId: tag });
         }
-
-        if (tag && option === 'updateFilament') {
-            return navigation.navigate('UpdateFilament', { tagId: tag });
-        }
     }
 
     return (
@@ -64,14 +60,7 @@ function Home({ navigation }) {
                     onPress={() => {
                         scanTag('newFilament');
                     }}>
-                    Add Filament
-                </Button>
-                <Button
-                    style={styles.btn}
-                    onPress={() => {
-                        scanTag('updateFilament');
-                    }}>
-                    Update Filament
+                    Add/Update Filament
                 </Button>
                 <Button
                     style={styles.btn}
