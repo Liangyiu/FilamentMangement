@@ -58,6 +58,13 @@ function Home({ navigation }) {
                 <Button
                     style={styles.btn}
                     onPress={() => {
+                        navigation.navigate('ShowStock');
+                    }}>
+                    Show Stock
+                </Button>
+                <Button
+                    style={styles.btn}
+                    onPress={() => {
                         scanTag('newFilament');
                     }}>
                     Add/Update Filament

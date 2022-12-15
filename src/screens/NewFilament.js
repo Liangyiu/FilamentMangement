@@ -182,7 +182,7 @@ function NewFilament({ navigation, route }) {
         try {
             await pushFilamentToDb({
                 _id: route.params.tagId,
-                color: color,
+                color: color.toLowerCase(),
                 diameter: +diameter,
                 producer: producer,
                 weight: +weight,
