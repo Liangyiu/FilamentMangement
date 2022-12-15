@@ -5,6 +5,7 @@ import TagInfo from '../screens/TagInfo';
 import NewProducer from '../screens/NewProducer';
 import NewFilament from '../screens/NewFilament';
 import UpdateFilament from '../screens/UpdateFilament';
+import ShowStock from '../screens/ShowStock';
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -17,6 +18,7 @@ function AppNavigation() {
                 <Screen name="NewProducer" component={NewProducer} />
                 <Screen name="NewFilament" component={NewFilament} />
                 <Screen name="UpdateFilament" component={UpdateFilament} />
+                <Screen name="ShowStock" component={ShowStock} />
             </Navigator>
         </NavigationContainer>
     );
