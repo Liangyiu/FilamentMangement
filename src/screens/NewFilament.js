@@ -25,8 +25,10 @@ function NewFilament({ navigation, route }) {
     const [visibleOne, setVisibleOne] = React.useState(false);
     const [visibleTwo, setVisibleTwo] = React.useState(false);
     const [modalText, setModalText] = React.useState('');
-    const [selectedIndex, setSelectedIndex] = React.useState();
-    const [selectedValue, setSelectedValue] = React.useState('Select a Producer');
+    const [selectedIndexProducer, setSelectedIndexProducer] = React.useState();
+    const [selectedValueProducer, setSelectedValueProducer] = React.useState('Select a Producer');
+    const [selectedIndexDiameter, setSelectedIndexDiameter] = React.useState();
+    const [selectedValueDiameter, setSelectedValueDiameter] = React.useState('Select a Diameter');
     const [color, setColor] = React.useState(undefined);
     const [diameter, setDiameter] = React.useState(undefined);
     const [weight, setWeight] = React.useState(undefined);
@@ -92,11 +94,15 @@ function NewFilament({ navigation, route }) {
             try {
                 const response = await axios(config);
 
-                const ids = response.data.documents.map(entry => {
+                const ids = await response.data.documents.map(entry => {
                     return entry._id;
                 });
 
                 setFilamentIds(ids);
+
+                if (ids.includes(route.params.tagId)) {
+                    return showModal('⛔ Tag already in use, do you want to update the information?', 'updateEntry');
+                }
             } catch (e) {
                 console.log(e);
             }
@@ -143,11 +149,6 @@ function NewFilament({ navigation, route }) {
 
         if (diameter === undefined) {
             showModal('⛔ Please enter a diameter!', 'warning');
-            return;
-        }
-
-        if (!numberRegex.test(diameter)) {
-            showModal('⛔ Please enter only numbers for the diameter!', 'warning');
             return;
         }
 
@@ -199,8 +200,7 @@ function NewFilament({ navigation, route }) {
             setProducer(undefined);
             setLastDried(undefined);
             setOpeningDate(undefined);
-            setSelectedIndex(new IndexPath(0));
-            
+            setSelectedIndexProducer(new IndexPath(0));
 
             showModal('✅ Added new Filament!', 'success');
         } catch (error) {
@@ -233,8 +233,15 @@ function NewFilament({ navigation, route }) {
     const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
     const renderOptions = producerData => (
-        <SelectItem key={producerData} title={producerData._id + ' - ' + producerData.emptyWeight + 'g empty spool weight'} />
+        <SelectItem
+            key={producerData}
+            title={producerData._id + ' - ' + producerData.emptyWeight + 'g empty spool weight'}
+        />
     );
+
+    const diameterData = [1.75, 3];
+
+    const renderOptions2 = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
 
     return (
         <>
@@ -250,13 +257,21 @@ function NewFilament({ navigation, route }) {
                         value={color}
                         onChangeText={input => setColor(input)}
                     />
-                    <Input
-                        style={styles.input}
-                        label="Diameter (in mm)"
-                        placeholder="15"
-                        value={diameter}
-                        onChangeText={input => setDiameter(input)}
-                    />
+                    <Select
+                        label="Diameter"
+                        style={styles.select}
+                        placeholder="Select a Diameter"
+                        value={selectedValueDiameter}
+                        selectedIndex={selectedIndexDiameter}
+                        onSelect={index => {
+                            setSelectedIndexDiameter(index);
+                            setSelectedValueDiameter(
+                                diameterData[index.row] + ' mm',
+                            );
+                            setDiameter(diameterData[index.row]);
+                        }}>
+                        {diameterData.map(renderOptions2)}
+                    </Select>
                     <Input
                         style={styles.input}
                         label="Weight (in g)"
@@ -280,11 +295,11 @@ function NewFilament({ navigation, route }) {
                         label="Producer"
                         style={styles.select}
                         placeholder="Select a Producer"
-                        value={selectedValue}
-                        selectedIndex={selectedIndex}
+                        value={selectedValueProducer}
+                        selectedIndex={selectedIndexProducer}
                         onSelect={index => {
-                            setSelectedIndex(index);
-                            setSelectedValue(
+                            setSelectedIndexProducer(index);
+                            setSelectedValueProducer(
                                 producers[index.row]._id +
                                     ' - ' +
                                     producers[index.row].emptyWeight +
@@ -313,12 +328,7 @@ function NewFilament({ navigation, route }) {
                                     setVisibleOne(false);
                                     navigation.navigate('UpdateFilament', {
                                         tagId: route.params.tagId,
-                                        color: color,
-                                        weight: weight,
-                                        producer: producer,
-                                        diameter: diameter,
-                                        lastDried: lastDried,
-                                        openingDate: openingDate,
+                                        producers: producers,
                                     });
                                 }}>
                                 Update
