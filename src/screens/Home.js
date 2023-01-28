@@ -41,6 +41,10 @@ function Home({ navigation }) {
         if (tag && option === 'newFilament') {
             return navigation.navigate('NewFilament', { tagId: tag });
         }
+
+        if (tag && option === 'updateFilament') {
+            return navigation.navigate('NewFilament', { tagId: tag });
+        }
     }
 
     return (

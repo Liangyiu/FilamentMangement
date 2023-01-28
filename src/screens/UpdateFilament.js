@@ -23,13 +23,17 @@ function UpdateFilament({ navigation, route }) {
     const [visibleOne, setVisibleOne] = React.useState(false);
     const [visibleTwo, setVisibleTwo] = React.useState(false);
     const [modalText, setModalText] = React.useState('');
-    const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+    const [selectedIndexProducer, setSelectedIndexProducer] = React.useState();
+    const [selectedValueProducer, setSelectedValueProducer] = React.useState('Select a Producer');
+    const [selectedIndexDiameter, setSelectedIndexDiameter] = React.useState();
+    const [selectedValueDiameter, setSelectedValueDiameter] = React.useState('Select a Diameter');
     const [color, setColor] = React.useState(route.params.color);
     const [diameter, setDiameter] = React.useState(route.params.diameter);
     const [weight, setWeight] = React.useState(route.params.weight);
-    const [producer, setProducer] = React.useState(route.params.producer);
+    const [producers, setProducers] = React.useState(route.params.producers);
     const [lastDried, setLastDried] = React.useState(route.params.lastDried);
     const [openingDate, setOpeningDate] = React.useState(route.params.openingDate);
+    const [producer, setProducer] = React.useState(undefined);
 
     const BackIcon = <Icon name="arrow-back" />;
 
@@ -84,11 +88,6 @@ function UpdateFilament({ navigation, route }) {
             return;
         }
 
-        if (!numberRegex.test(diameter)) {
-            showModal('⛔ Please enter only numbers for the diameter!', 'warning');
-            return;
-        }
-
         if (weight === undefined) {
             showModal('⛔ Please enter a weight!', 'warning');
             return;
@@ -139,7 +138,7 @@ function UpdateFilament({ navigation, route }) {
                 break;
             }
             case 'warning': {
-                setVisibleTwo(true);
+                setVisibleOne(true);
                 break;
             }
         }
@@ -149,6 +148,17 @@ function UpdateFilament({ navigation, route }) {
         navigation.goBack();
     };
     const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
+
+    const renderOptions = producerData => (
+        <SelectItem
+            key={producerData}
+            title={producerData._id + ' - ' + producerData.emptyWeight + 'g empty spool weight'}
+        />
+    );
+
+    const diameterData = [1.75, 3];
+
+    const renderOptions2 = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
 
     return (
         <>
@@ -164,13 +174,21 @@ function UpdateFilament({ navigation, route }) {
                         value={color}
                         onChangeText={input => setColor(input)}
                     />
-                    <Input
-                        style={styles.input}
-                        label="Diameter (in mm)"
-                        placeholder="15"
-                        value={diameter}
-                        onChangeText={input => setDiameter(input)}
-                    />
+                    <Select
+                        label="Diameter"
+                        style={styles.select}
+                        placeholder="Select a Diameter"
+                        value={selectedValueDiameter}
+                        selectedIndex={selectedIndexDiameter}
+                        onSelect={index => {
+                            setSelectedIndexDiameter(index);
+                            setSelectedValueDiameter(
+                                diameterData[index.row] + ' mm',
+                            );
+                            setDiameter(diameterData[index.row]);
+                        }}>
+                        {diameterData.map(renderOptions2)}
+                    </Select>
                     <Input
                         style={styles.input}
                         label="Weight (in g)"
@@ -194,20 +212,41 @@ function UpdateFilament({ navigation, route }) {
                         label="Producer"
                         style={styles.select}
                         placeholder="Select a Producer"
-                        value={producer._id + ' - ' + producer.emptyWeight + 'g empty spool weight'}
-                        selectedIndex={selectedIndex}
+                        value={selectedValueProducer}
+                        selectedIndex={selectedIndexProducer}
                         onSelect={index => {
-                            setSelectedIndex(index);
+                            setSelectedIndexProducer(index);
+                            setSelectedValueProducer(
+                                producers[index.row]._id +
+                                    ' - ' +
+                                    producers[index.row].emptyWeight +
+                                    ' g empty spool weight',
+                            );
+                            setProducer(producers[index.row]);
                         }}>
-                        <SelectItem
-                            key={producer}
-                            title={producer._id + ' - ' + producer.emptyWeight + 'g empty spool weight'}
-                        />
+                        {producers.map(renderOptions)}
                     </Select>
                     <Button style={styles.btn} onPress={addFilament}>
                         Add
                     </Button>
                 </Layout>
+                <Modal
+                    visible={visibleOne}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => setVisibleOne(false)}>
+                    <Card disabled={true}>
+                        <Text style={styles.alertText} category="h6">
+                            {modalText}
+                        </Text>
+                        <Button
+                            style={styles.btn}
+                            onPress={() => {
+                                setVisibleOne(false);
+                            }}>
+                            Dismiss
+                        </Button>
+                    </Card>
+                </Modal>
                 <Modal
                     visible={visibleTwo}
                     backdropStyle={styles.backdrop}
