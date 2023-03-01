@@ -9,6 +9,7 @@ const BackIcon = props => <Icon {...props} name="arrow-back" />;
 function TagInfo({ navigation, route }) {
     const [id, setId] = React.useState('none');
     const [color, setColor] = React.useState('none');
+    const [material, setMaterial] = React.useState('none');
     const [diameter, setDiameter] = React.useState(0);
     const [lastDried, setLastDried] = React.useState(new Date());
     const [openingDate, setOpeningDate] = React.useState(new Date());
@@ -44,6 +45,7 @@ function TagInfo({ navigation, route }) {
 
                 setId(tagInfo._id);
                 setColor(tagInfo.color);
+                setMaterial(tagInfo.material);
                 setDiameter(tagInfo.diameter);
                 setLastDried(new Date(tagInfo.lastDried));
                 setOpeningDate(new Date(tagInfo.openingDate));
@@ -69,13 +71,19 @@ function TagInfo({ navigation, route }) {
         <>
             <TopNavigation title={'Info for filament ' + id} alignment="center" accessoryLeft={BackAction} />
             <Divider />
-            <ScrollView contentContainerStyle={styles.container} endFillColor='#222B45'>
+            <ScrollView contentContainerStyle={styles.container} endFillColor="#222B45">
                 <Layout style={styles.wrapper}>
                     <Input style={styles.input} disabled={true} label="Id" value={id} />
                     <Input style={styles.input} disabled={true} label="Color" value={color} />
                     <Input style={styles.input} disabled={true} label="Diameter" value={diameter.toString() + ' mm'} />
+                    <Input style={styles.input} disabled={true} label="Material" value={material} />
                     <Input style={styles.input} disabled={true} label="Producer" value={producer} />
-                    <Input style={styles.input} disabled={true} label="Weight (w/o empty spool)" value={weight.toString() + ' g'} />
+                    <Input
+                        style={styles.input}
+                        disabled={true}
+                        label="Weight (w/o empty spool)"
+                        value={weight.toString() + ' g'}
+                    />
                     <Input style={styles.input} disabled={true} label="Opening Date" value={openingDate.toString()} />
                     <Input style={styles.input} disabled={true} label="Last Dried" value={lastDried.toString()} />
                 </Layout>
@@ -92,7 +100,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 35,
     },
     container: {
-        flexGrow: 1
+        flexGrow: 1,
     },
     input: {
         marginVertical: 5,
