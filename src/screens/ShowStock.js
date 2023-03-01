@@ -21,6 +21,7 @@ function ShowStock({ navigation, route }) {
             _id: 'dummy',
             weight: 'dummy',
             diameter: 'dummy',
+            material: 'dummy',
             producer: {
                 _id: 'dummy',
                 emptyWeight: 'dummy',
@@ -79,12 +80,13 @@ function ShowStock({ navigation, route }) {
             'Id',
             'Color',
             'Diameter (in mm)',
+            'Material',
             'Weight w/o spool\n(in g)',
             'Producer',
             'Opened on',
             'Last dried on',
         ],
-        widthArr: [200, 200, 200, 200, 200, 200, 200],
+        widthArr: [200, 200, 200, 200, 200, 200, 200, 200],
     };
 
     const switchTabContent = () => {
@@ -156,6 +158,7 @@ function ShowStock({ navigation, route }) {
             data._id,
             data.color,
             data.diameter,
+            data.material,
             data.weight - data.producer.emptyWeight,
             data.producer._id,
             new Date(data.openingDate).toLocaleString('en-GB', {

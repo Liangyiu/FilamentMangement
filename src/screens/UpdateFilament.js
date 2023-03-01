@@ -29,11 +29,12 @@ function UpdateFilament({ navigation, route }) {
     const [selectedValueDiameter, setSelectedValueDiameter] = React.useState('Select a Diameter');
     const [color, setColor] = React.useState(route.params.color);
     const [diameter, setDiameter] = React.useState(route.params.diameter);
+    const [material, setMaterial] = React.useState(route.params.material);
     const [weight, setWeight] = React.useState(route.params.weight);
     const [producers, setProducers] = React.useState(route.params.producers);
-    const [lastDried, setLastDried] = React.useState(route.params.lastDried);
-    const [openingDate, setOpeningDate] = React.useState(route.params.openingDate);
-    const [producer, setProducer] = React.useState(undefined);
+    const [lastDried, setLastDried] = React.useState(new Date(route.params.lastDried));
+    const [openingDate, setOpeningDate] = React.useState(new Date(route.params.openingDate));
+    const [producer, setProducer] = React.useState(route.params.producer);
 
     const BackIcon = <Icon name="arrow-back" />;
 
@@ -49,6 +50,7 @@ function UpdateFilament({ navigation, route }) {
                 $set: {
                     color: color,
                     diameter: +diameter,
+                    material: material,
                     weight: +weight,
                     openingDate: openingDate,
                     lastDried: lastDried,
@@ -88,6 +90,11 @@ function UpdateFilament({ navigation, route }) {
             return;
         }
 
+        if (material === undefined) {
+            showModal('⛔ Please enter a material!', 'warning');
+            return;
+        }
+
         if (weight === undefined) {
             showModal('⛔ Please enter a weight!', 'warning');
             return;
@@ -117,6 +124,7 @@ function UpdateFilament({ navigation, route }) {
                 _id: route.params.tagId,
                 color: color.toLowerCase(),
                 diameter: +diameter,
+                material: material,
                 producer: producer,
                 weight: +weight,
                 lastDried: new Date(lastDried),
@@ -182,13 +190,18 @@ function UpdateFilament({ navigation, route }) {
                         selectedIndex={selectedIndexDiameter}
                         onSelect={index => {
                             setSelectedIndexDiameter(index);
-                            setSelectedValueDiameter(
-                                diameterData[index.row] + ' mm',
-                            );
+                            setSelectedValueDiameter(diameterData[index.row] + ' mm');
                             setDiameter(diameterData[index.row]);
                         }}>
                         {diameterData.map(renderOptions2)}
                     </Select>
+                    <Input
+                        style={styles.input}
+                        label="Material"
+                        placeholder="pla"
+                        value={material}
+                        onChangeText={input => setMaterial(input)}
+                    />
                     <Input
                         style={styles.input}
                         label="Weight (in g)"
@@ -227,7 +240,7 @@ function UpdateFilament({ navigation, route }) {
                         {producers.map(renderOptions)}
                     </Select>
                     <Button style={styles.btn} onPress={addFilament}>
-                        Add
+                        Update
                     </Button>
                 </Layout>
                 <Modal

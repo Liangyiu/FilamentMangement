@@ -31,6 +31,7 @@ function NewFilament({ navigation, route }) {
     const [selectedValueDiameter, setSelectedValueDiameter] = React.useState('Select a Diameter');
     const [color, setColor] = React.useState(undefined);
     const [diameter, setDiameter] = React.useState(undefined);
+    const [material, setMaterial] = React.useState(undefined);
     const [weight, setWeight] = React.useState(undefined);
     const [producer, setProducer] = React.useState(undefined);
     const [lastDried, setLastDried] = React.useState(undefined);
@@ -70,6 +71,44 @@ function NewFilament({ navigation, route }) {
             getDataProducers();
         }
 
+        async function getDataForId() {
+            const data = JSON.stringify({
+                collection: 'stock',
+                database: 'filament-management',
+                dataSource: 'Cluster0',
+                filter: {
+                    _id: route.params.tagId,
+                },
+            });
+
+            const config = {
+                method: 'post',
+                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Request-Headers': '*',
+                    'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+                },
+                data: data,
+            };
+
+            try {
+                const response = await axios(config);
+
+                const tagData = response.data.documents[0];
+
+                setColor(tagData.color);
+                setDiameter(tagData.diameter);
+                setProducer(tagData.producer);
+                setWeight(tagData.weight.toString());
+                setOpeningDate(new Date(tagData.openingDate));
+                setLastDried(new Date(tagData.lastDried));
+                setMaterial(tagData.material);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
         async function getData() {
             const data = JSON.stringify({
                 collection: 'stock',
@@ -101,6 +140,7 @@ function NewFilament({ navigation, route }) {
                 setFilamentIds(ids);
 
                 if (ids.includes(route.params.tagId)) {
+                    await getDataForId();
                     return showModal('⛔ Tag already in use, do you want to update the information?', 'updateEntry');
                 }
             } catch (e) {
@@ -157,6 +197,11 @@ function NewFilament({ navigation, route }) {
             return;
         }
 
+        if (material === undefined) {
+            showModal('⛔ Please enter a material!', 'warning');
+            return;
+        }
+
         if (!numberRegex.test(weight)) {
             showModal('⛔ Please enter only numbers for the weight!', 'warning');
             return;
@@ -185,6 +230,7 @@ function NewFilament({ navigation, route }) {
                 _id: route.params.tagId,
                 color: color.toLowerCase(),
                 diameter: +diameter,
+                material: material,
                 producer: producer,
                 weight: +weight,
                 lastDried: new Date(lastDried),
@@ -197,6 +243,7 @@ function NewFilament({ navigation, route }) {
             setColor(undefined);
             setWeight(undefined);
             setDiameter(undefined);
+            setMaterial(undefined);
             setProducer(undefined);
             setLastDried(undefined);
             setOpeningDate(undefined);
@@ -265,13 +312,18 @@ function NewFilament({ navigation, route }) {
                         selectedIndex={selectedIndexDiameter}
                         onSelect={index => {
                             setSelectedIndexDiameter(index);
-                            setSelectedValueDiameter(
-                                diameterData[index.row] + ' mm',
-                            );
+                            setSelectedValueDiameter(diameterData[index.row] + ' mm');
                             setDiameter(diameterData[index.row]);
                         }}>
                         {diameterData.map(renderOptions2)}
                     </Select>
+                    <Input
+                        style={styles.input}
+                        label="Material"
+                        placeholder="pla"
+                        value={material}
+                        onChangeText={input => setMaterial(input)}
+                    />
                     <Input
                         style={styles.input}
                         label="Weight (in g)"
@@ -329,6 +381,13 @@ function NewFilament({ navigation, route }) {
                                     navigation.navigate('UpdateFilament', {
                                         tagId: route.params.tagId,
                                         producers: producers,
+                                        color: color,
+                                        diameter: diameter,
+                                        material: material,
+                                        weight: weight,
+                                        producer: producer,
+                                        lastDried: lastDried.toString(),
+                                        openingDate: openingDate.toString(),
                                     });
                                 }}>
                                 Update
