@@ -1,10 +1,22 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
 import NfcManager, { NfcEvents, NfcTech } from 'react-native-nfc-manager';
-import { Button, Input, TopNavigation, Divider, TopNavigationAction, Icon, Layout } from '@ui-kitten/components';
+import {
+    Button,
+    Input,
+    TopNavigation,
+    Divider,
+    TopNavigationAction,
+    Icon,
+    Layout,
+    Modal,
+    Card,
+    ButtonGroup,
+} from '@ui-kitten/components';
 import axios from 'axios';
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
+const TrashIcon = props => <Icon {...props} name="trash-outline" />;
 
 function TagInfo({ navigation, route }) {
     const [id, setId] = React.useState('none');
@@ -15,6 +27,8 @@ function TagInfo({ navigation, route }) {
     const [openingDate, setOpeningDate] = React.useState(new Date());
     const [producer, setProducer] = React.useState('none');
     const [weight, setWeight] = React.useState(0);
+    const [spoolSize, setSpoolSize] = React.useState(0);
+    const [visible, setVisible] = React.useState(false);
 
     React.useEffect(() => {
         async function getData(id) {
@@ -47,9 +61,10 @@ function TagInfo({ navigation, route }) {
                 setColor(tagInfo.color);
                 setMaterial(tagInfo.material);
                 setDiameter(tagInfo.diameter);
+                setSpoolSize(tagInfo.producer.spoolSize);
                 setLastDried(new Date(tagInfo.lastDried));
                 setOpeningDate(new Date(tagInfo.openingDate));
-                setProducer(tagInfo.producer._id);
+                setProducer(tagInfo.producer.producerName);
                 setWeight(tagInfo.weight - tagInfo.producer.emptyWeight);
             } catch (e) {
                 console.log(e);
@@ -65,11 +80,49 @@ function TagInfo({ navigation, route }) {
         navigation.goBack();
     };
 
+    const deleteTagInfo = async () => {
+        const data = JSON.stringify({
+            collection: 'stock',
+            database: 'filament-management',
+            dataSource: 'Cluster0',
+            filter: {
+                _id: id,
+            },
+        });
+
+        const config = {
+            method: 'post',
+            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/deleteOne',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Request-Headers': '*',
+                'api-key': '***REMOVED***',
+            },
+            data: data,
+        };
+
+        try {
+            return await axios(config);
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const showModal = () => {
+        setVisible(true);
+    };
+
     const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
+    const TrashAction = () => <TopNavigationAction icon={TrashIcon} onPress={showModal} />;
 
     return (
         <>
-            <TopNavigation title={'Info for filament ' + id} alignment="center" accessoryLeft={BackAction} />
+            <TopNavigation
+                title={'Info for filament ' + id}
+                alignment="center"
+                accessoryLeft={BackAction}
+                accessoryRight={TrashAction}
+            />
             <Divider />
             <ScrollView contentContainerStyle={styles.container} endFillColor="#222B45">
                 <Layout style={styles.wrapper}>
@@ -81,12 +134,44 @@ function TagInfo({ navigation, route }) {
                     <Input
                         style={styles.input}
                         disabled={true}
+                        label="Spool size"
+                        value={spoolSize.toString() + ' g'}
+                    />
+                    <Input
+                        style={styles.input}
+                        disabled={true}
                         label="Weight (w/o empty spool)"
                         value={weight.toString() + ' g'}
                     />
                     <Input style={styles.input} disabled={true} label="Opening Date" value={openingDate.toString()} />
                     <Input style={styles.input} disabled={true} label="Last Dried" value={lastDried.toString()} />
                 </Layout>
+
+                <Modal visible={visible} backdropStyle={styles.backdrop} onBackdropPress={() => setVisible(false)}>
+                    <Card disabled={true}>
+                        <Text style={styles.alertText} category="h6">
+                            ⛔ Confirm deletion
+                        </Text>
+                        <ButtonGroup style={styles.wrapper}>
+                            <Button
+                                style={styles.btn}
+                                onPress={() => {
+                                    deleteTagInfo();
+                                    setVisible(false);
+                                    navigateBack();
+                                }}>
+                                Delete
+                            </Button>
+                            <Button
+                                style={styles.btn}
+                                onPress={() => {
+                                    setVisible(false);
+                                }}>
+                                Dismiss
+                            </Button>
+                        </ButtonGroup>
+                    </Card>
+                </Modal>
             </ScrollView>
         </>
     );
@@ -104,6 +189,18 @@ const styles = StyleSheet.create({
     },
     input: {
         marginVertical: 5,
+    },
+    btn: {
+        margin: 8,
+        padding: 8,
+        borderRadius: 8,
+    },
+    alertText: {
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    backdrop: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
 });
 

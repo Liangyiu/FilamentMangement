@@ -24,11 +24,16 @@ function NewFilament({ navigation, route }) {
     const [producers, setProducers] = React.useState([]);
     const [visibleOne, setVisibleOne] = React.useState(false);
     const [visibleTwo, setVisibleTwo] = React.useState(false);
+    const [visibleThree, setVisibleThree] = React.useState(false);
     const [modalText, setModalText] = React.useState('');
     const [selectedIndexProducer, setSelectedIndexProducer] = React.useState();
     const [selectedValueProducer, setSelectedValueProducer] = React.useState('Select a Producer');
     const [selectedIndexDiameter, setSelectedIndexDiameter] = React.useState();
     const [selectedValueDiameter, setSelectedValueDiameter] = React.useState('Select a Diameter');
+    const [selectedIndexMaterial, setSelectedIndexMaterial] = React.useState();
+    const [selectedValueMaterial, setSelectedValueMaterial] = React.useState('Select a Material');
+    const [selectedIndexColor, setSelectedIndexColor] = React.useState();
+    const [selectedValueColor, setSelectedValueColor] = React.useState('Select a Color');
     const [color, setColor] = React.useState(undefined);
     const [diameter, setDiameter] = React.useState(undefined);
     const [material, setMaterial] = React.useState(undefined);
@@ -228,7 +233,7 @@ function NewFilament({ navigation, route }) {
         try {
             await pushFilamentToDb({
                 _id: route.params.tagId,
-                color: color.toLowerCase(),
+                color: color,
                 diameter: +diameter,
                 material: material,
                 producer: producer,
@@ -248,6 +253,9 @@ function NewFilament({ navigation, route }) {
             setLastDried(undefined);
             setOpeningDate(undefined);
             setSelectedIndexProducer(new IndexPath(0));
+            setSelectedIndexColor(new IndexPath(0));
+            setSelectedIndexDiameter(new IndexPath(0));
+            setSelectedIndexMaterial(new IndexPath(0));
 
             showModal('✅ Added new Filament!', 'success');
         } catch (error) {
@@ -264,7 +272,7 @@ function NewFilament({ navigation, route }) {
                 break;
             }
             case 'success': {
-                setVisibleTwo(true);
+                setVisibleThree(true);
                 break;
             }
             case 'warning': {
@@ -279,16 +287,40 @@ function NewFilament({ navigation, route }) {
     };
     const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
-    const renderOptions = producerData => (
+    const renderOptionsProducer = producerData => (
         <SelectItem
             key={producerData}
-            title={producerData._id + ' - ' + producerData.emptyWeight + 'g empty spool weight'}
+            title={
+                producerData.producerName +
+                ' - ' +
+                producerData.emptyWeight +
+                'g empty spool weight' +
+                ' - Spool size: ' +
+                producerData.spoolSize +
+                'g'
+            }
         />
     );
 
     const diameterData = [1.75, 3];
+    const renderOptionsDiameter = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
 
-    const renderOptions2 = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
+    const materialData = [
+        'ABS Pro Flame Retardant',
+        'ApolloX',
+        'ASA',
+        'PETG',
+        'PLA',
+        'TPU (92 Shore A)',
+        'ABS',
+        'Nylon',
+        'PC',
+        'Peek',
+    ];
+    const renderOptionsMaterial = materialData => <SelectItem key={materialData} title={materialData} />;
+
+    const colorData = ['Black', 'White', 'Gray', 'Silver', 'Natural', 'Red', 'Green', 'Blue', 'Yellow', 'Orange'];
+    const renderOptionsColor = colorData => <SelectItem key={colorData} title={colorData} />;
 
     return (
         <>
@@ -297,13 +329,19 @@ function NewFilament({ navigation, route }) {
             <ScrollView contentContainerStyle={styles.container} endFillColor="#222B45">
                 <Layout style={styles.wrapper}>
                     <Input style={styles.input} disabled={true} label="Id" value={route.params.tagId} />
-                    <Input
-                        style={styles.input}
+                    <Select
                         label="Color"
-                        placeholder="red"
-                        value={color}
-                        onChangeText={input => setColor(input)}
-                    />
+                        style={styles.select}
+                        placeholder="Select a Color"
+                        value={selectedValueColor}
+                        selectedIndex={selectedIndexColor}
+                        onSelect={index => {
+                            setSelectedIndexColor(index);
+                            setSelectedValueColor(colorData[index.row]);
+                            setColor(colorData[index.row]);
+                        }}>
+                        {colorData.map(renderOptionsColor)}
+                    </Select>
                     <Select
                         label="Diameter"
                         style={styles.select}
@@ -315,15 +353,21 @@ function NewFilament({ navigation, route }) {
                             setSelectedValueDiameter(diameterData[index.row] + ' mm');
                             setDiameter(diameterData[index.row]);
                         }}>
-                        {diameterData.map(renderOptions2)}
+                        {diameterData.map(renderOptionsDiameter)}
                     </Select>
-                    <Input
-                        style={styles.input}
+                    <Select
                         label="Material"
-                        placeholder="pla"
-                        value={material}
-                        onChangeText={input => setMaterial(input)}
-                    />
+                        style={styles.select}
+                        placeholder="Select a Material"
+                        value={selectedValueMaterial}
+                        selectedIndex={selectedIndexMaterial}
+                        onSelect={index => {
+                            setSelectedIndexMaterial(index);
+                            setSelectedValueMaterial(materialData[index.row] + ' mm');
+                            setMaterial(materialData[index.row]);
+                        }}>
+                        {materialData.map(renderOptionsMaterial)}
+                    </Select>
                     <Input
                         style={styles.input}
                         label="Weight (in g)"
@@ -352,14 +396,17 @@ function NewFilament({ navigation, route }) {
                         onSelect={index => {
                             setSelectedIndexProducer(index);
                             setSelectedValueProducer(
-                                producers[index.row]._id +
+                                producers[index.row].producerName +
                                     ' - ' +
                                     producers[index.row].emptyWeight +
-                                    ' g empty spool weight',
+                                    ' g empty spool weight' +
+                                    ' - Spool size: ' +
+                                    producers[index.row].spoolSize +
+                                    'g',
                             );
                             setProducer(producers[index.row]);
                         }}>
-                        {producers.map(renderOptions)}
+                        {producers.map(renderOptionsProducer)}
                     </Select>
                     <Button style={styles.btn} onPress={addFilament}>
                         Add
@@ -388,6 +435,14 @@ function NewFilament({ navigation, route }) {
                                         producer: producer,
                                         lastDried: lastDried.toString(),
                                         openingDate: openingDate.toString(),
+                                        selectedIndexProducer: selectedIndexProducer,
+                                        selectedValueProducer: selectedValueProducer,
+                                        selectedIndexColor: selectedIndexColor,
+                                        selectedValueColor: selectedValueColor,
+                                        selectedIndexDiameter: selectedIndexDiameter,
+                                        selectedValueDiameter: selectedValueDiameter,
+                                        selectedIndexMaterial: selectedIndexMaterial,
+                                        selectedValueMaterial: selectedValueMaterial,
                                     });
                                 }}>
                                 Update
@@ -411,6 +466,24 @@ function NewFilament({ navigation, route }) {
                             {modalText}
                         </Text>
                         <Button style={styles.btn} onPress={() => setVisibleTwo(false)}>
+                            Dismiss
+                        </Button>
+                    </Card>
+                </Modal>
+                <Modal
+                    visible={visibleThree}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => setVisibleThree(false)}>
+                    <Card disabled={true}>
+                        <Text style={styles.alertText} category="h6">
+                            {modalText}
+                        </Text>
+                        <Button
+                            style={styles.btn}
+                            onPress={() => {
+                                setVisibleThree(false);
+                                navigateBack();
+                            }}>
                             Dismiss
                         </Button>
                     </Card>

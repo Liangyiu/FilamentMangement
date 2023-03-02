@@ -23,8 +23,9 @@ function ShowStock({ navigation, route }) {
             diameter: 'dummy',
             material: 'dummy',
             producer: {
-                _id: 'dummy',
+                producerName: 'dummy',
                 emptyWeight: 'dummy',
+                spoolSize: 'dummy',
             },
             openingDate: 'dummy',
             lastDried: 'dummy',
@@ -82,11 +83,12 @@ function ShowStock({ navigation, route }) {
             'Diameter (in mm)',
             'Material',
             'Weight w/o spool\n(in g)',
+            'Spool size (in g)',
             'Producer',
             'Opened on',
             'Last dried on',
         ],
-        widthArr: [200, 200, 200, 200, 200, 200, 200, 200],
+        widthArr: [200, 200, 200, 200, 200, 200, 200, 200, 200],
     };
 
     const switchTabContent = () => {
@@ -160,7 +162,8 @@ function ShowStock({ navigation, route }) {
             data.diameter,
             data.material,
             data.weight - data.producer.emptyWeight,
-            data.producer._id,
+            data.producer.spoolSize,
+            data.producer.producerName,
             new Date(data.openingDate).toLocaleString('en-GB', {
                 year: 'numeric',
                 month: 'numeric',
