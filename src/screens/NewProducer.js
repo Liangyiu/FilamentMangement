@@ -18,20 +18,22 @@ import axios from 'axios';
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 
 function NewProducer({ navigation, route }) {
-    const [producerIds, setProducerIds] = React.useState([]);
     const [producerName, setProducerName] = React.useState('');
     const [emptySpoolWeight, setEmptySpoolWeight] = React.useState(0);
+    const [spoolSize, setSpoolSize] = React.useState(0);
     const [visible, setVisible] = React.useState(false);
+    const [visibleTwo, setVisibleTwo] = React.useState(false);
     const [modalText, setModalText] = React.useState('');
+    const [producers, setProducers] = React.useState([]);
 
     React.useEffect(() => {
-        async function getData() {
+        async function getDataProducers() {
             const data = JSON.stringify({
                 collection: 'producers',
                 database: 'filament-management',
                 dataSource: 'Cluster0',
                 projection: {
-                    _id: 1,
+                    _id: 0,
                 },
             });
 
@@ -49,18 +51,14 @@ function NewProducer({ navigation, route }) {
             try {
                 const response = await axios(config);
 
-                const ids = response.data.documents.map(entry => {
-                    return entry._id;
-                });
-
-                setProducerIds(ids);
+                setProducers(response.data.documents);
             } catch (e) {
                 console.log(e);
             }
         }
 
-        if (producerIds.length === 0) {
-            getData();
+        if (producers.length === 0) {
+            getDataProducers();
         }
     });
 
@@ -70,9 +68,10 @@ function NewProducer({ navigation, route }) {
 
     const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
-    const showModal = text => {
+    const showModal = (text, modalNum = 1) => {
         setModalText(text);
-        setVisible(true);
+        if (modalNum === 1) setVisible(true);
+        if (modalNum === 2) setVisibleTwo(true);
     };
 
     const pushProducerToDb = async producerData => {
@@ -101,16 +100,26 @@ function NewProducer({ navigation, route }) {
         }
     };
 
+    const producerExists = producerData => {
+        if (
+            producers.find(
+                el =>
+                    el.emptyWeight === producerData.emptyWeight &&
+                    el.producerName === producerData.producerName &&
+                    el.spoolSize === producerData.spoolSize,
+            )
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     const addProducer = async () => {
         const numberRegex = new RegExp('^[0-9]*$');
 
         if (producerName === '') {
             showModal('⛔ Please enter a producer name!');
-            return;
-        }
-
-        if (producerIds.includes(producerName)) {
-            showModal('⛔ Producer names must be unique!');
             return;
         }
 
@@ -124,22 +133,43 @@ function NewProducer({ navigation, route }) {
             return;
         }
 
+        if (spoolSize === 0) {
+            showModal('⛔ Please enter a spool size!');
+            return;
+        }
+
+        if (!numberRegex.test(spoolSize)) {
+            showModal('⛔ Please enter only numbers for the spool size!');
+            return;
+        }
+
+        if (
+            producerExists({
+                producerName: producerName,
+                emptyWeight: +emptySpoolWeight,
+                spoolSize: +spoolSize,
+            })
+        ) {
+            showModal('⛔ A producer with the data you entered already exists!');
+            return;
+        }
+
         try {
             await pushProducerToDb({
-                _id: producerName,
+                producerName: producerName,
                 emptyWeight: +emptySpoolWeight,
+                spoolSize: +spoolSize,
             });
-            
-            const newIds = producerIds;
-            newIds.push(producerName)
 
-            setProducerIds(newIds);
-            setProducerName('');
-            setEmptySpoolWeight(0);
+            const newProducers = producers.push({
+                producerName: producerName,
+                emptyWeight: +emptySpoolWeight,
+                spoolSize: +spoolSize,
+            });
 
-            showModal('✅ Added new producer!');
+            showModal('✅ Added new producer!', 2);
         } catch (error) {
-            showModal('⛔ An error occured while pushing your data to the database!')
+            showModal('⛔ An error occured while pushing your data to the database!');
         }
     };
 
@@ -166,7 +196,18 @@ function NewProducer({ navigation, route }) {
                     placeholder="250"
                     value={emptySpoolWeight}
                 />
-                <Button style={styles.btn} onPress={addProducer}>Add</Button>
+                <Input
+                    style={styles.input}
+                    onChangeText={input => {
+                        setSpoolSize(input);
+                    }}
+                    label="Spool size (in g)"
+                    placeholder="250"
+                    value={spoolSize}
+                />
+                <Button style={styles.btn} onPress={addProducer}>
+                    Add
+                </Button>
             </Layout>
 
             <Modal visible={visible} backdropStyle={styles.backdrop} onBackdropPress={() => setVisible(false)}>
@@ -174,7 +215,22 @@ function NewProducer({ navigation, route }) {
                     <Text style={styles.alertText} category="h6">
                         {modalText}
                     </Text>
-                    <Button style={styles.btn} onPress={() => setVisible(false)}>Dismiss</Button>
+                    <Button style={styles.btn} onPress={() => setVisible(false)}>
+                        Dismiss
+                    </Button>
+                </Card>
+            </Modal>
+            <Modal visible={visibleTwo} backdropStyle={styles.backdrop} onBackdropPress={() => setVisibleTwo(false)}>
+                <Card disabled={true}>
+                    <Text style={styles.alertText} category="h6">
+                        {modalText}
+                    </Text>
+                    <Button style={styles.btn} onPress={() => {
+                        setVisibleTwo(false);
+                        navigateBack();
+                    }}>
+                        Dismiss
+                    </Button>
                 </Card>
             </Modal>
         </>

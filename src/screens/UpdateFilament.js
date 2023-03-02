@@ -23,10 +23,14 @@ function UpdateFilament({ navigation, route }) {
     const [visibleOne, setVisibleOne] = React.useState(false);
     const [visibleTwo, setVisibleTwo] = React.useState(false);
     const [modalText, setModalText] = React.useState('');
-    const [selectedIndexProducer, setSelectedIndexProducer] = React.useState();
-    const [selectedValueProducer, setSelectedValueProducer] = React.useState('Select a Producer');
-    const [selectedIndexDiameter, setSelectedIndexDiameter] = React.useState();
-    const [selectedValueDiameter, setSelectedValueDiameter] = React.useState('Select a Diameter');
+    const [selectedIndexProducer, setSelectedIndexProducer] = React.useState(route.params.selectedIndexProducer);
+    const [selectedValueProducer, setSelectedValueProducer] = React.useState(route.params.selectedValueProducer);
+    const [selectedIndexDiameter, setSelectedIndexDiameter] = React.useState(route.params.selectedIndexDiameter);
+    const [selectedValueDiameter, setSelectedValueDiameter] = React.useState(route.params.selectedValueDiameter);
+    const [selectedIndexMaterial, setSelectedIndexMaterial] = React.useState(route.params.selectedIndexMaterial);
+    const [selectedValueMaterial, setSelectedValueMaterial] = React.useState(route.params.selectedValueMaterial);
+    const [selectedIndexColor, setSelectedIndexColor] = React.useState(route.params.selectedIndexColor);
+    const [selectedValueColor, setSelectedValueColor] = React.useState(route.params.selectedValueColor);
     const [color, setColor] = React.useState(route.params.color);
     const [diameter, setDiameter] = React.useState(route.params.diameter);
     const [material, setMaterial] = React.useState(route.params.material);
@@ -122,7 +126,7 @@ function UpdateFilament({ navigation, route }) {
         try {
             await pushFilamentToDb({
                 _id: route.params.tagId,
-                color: color.toLowerCase(),
+                color: color,
                 diameter: +diameter,
                 material: material,
                 producer: producer,
@@ -157,7 +161,7 @@ function UpdateFilament({ navigation, route }) {
     };
     const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
-    const renderOptions = producerData => (
+    const renderOptionsProducer = producerData => (
         <SelectItem
             key={producerData}
             title={producerData._id + ' - ' + producerData.emptyWeight + 'g empty spool weight'}
@@ -165,8 +169,24 @@ function UpdateFilament({ navigation, route }) {
     );
 
     const diameterData = [1.75, 3];
+    const renderOptionsDiameter = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
 
-    const renderOptions2 = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
+    const materialData = [
+        'ABS Pro Flame Retardant',
+        'ApolloX',
+        'ASA',
+        'PETG',
+        'PLA',
+        'TPU (92 Shore A)',
+        'ABS',
+        'Nylon',
+        'PC',
+        'Peek',
+    ];
+    const renderOptionsMaterial = materialData => <SelectItem key={materialData} title={materialData} />;
+
+    const colorData = ['Black', 'White', 'Gray', 'Silver', 'Natural', 'Red', 'Green', 'Blue', 'Yellow', 'Orange'];
+    const renderOptionsColor = colorData => <SelectItem key={colorData} title={colorData} />;
 
     return (
         <>
@@ -175,13 +195,19 @@ function UpdateFilament({ navigation, route }) {
             <ScrollView contentContainerStyle={styles.container} endFillColor="#222B45">
                 <Layout style={styles.wrapper}>
                     <Input style={styles.input} disabled={true} label="Id" value={route.params.tagId} />
-                    <Input
-                        style={styles.input}
+                    <Select
                         label="Color"
-                        placeholder="red"
-                        value={color}
-                        onChangeText={input => setColor(input)}
-                    />
+                        style={styles.select}
+                        placeholder="Select a Color"
+                        value={selectedValueColor}
+                        selectedIndex={selectedIndexColor}
+                        onSelect={index => {
+                            setSelectedIndexColor(index);
+                            setSelectedValueColor(colorData[index.row]);
+                            setColor(colorData[index.row]);
+                        }}>
+                        {colorData.map(renderOptionsColor)}
+                    </Select>
                     <Select
                         label="Diameter"
                         style={styles.select}
@@ -193,15 +219,21 @@ function UpdateFilament({ navigation, route }) {
                             setSelectedValueDiameter(diameterData[index.row] + ' mm');
                             setDiameter(diameterData[index.row]);
                         }}>
-                        {diameterData.map(renderOptions2)}
+                        {diameterData.map(renderOptionsDiameter)}
                     </Select>
-                    <Input
-                        style={styles.input}
+                    <Select
                         label="Material"
-                        placeholder="pla"
-                        value={material}
-                        onChangeText={input => setMaterial(input)}
-                    />
+                        style={styles.select}
+                        placeholder="Select a Material"
+                        value={selectedValueMaterial}
+                        selectedIndex={selectedIndexMaterial}
+                        onSelect={index => {
+                            setSelectedIndexMaterial(index);
+                            setSelectedValueMaterial(materialData[index.row] + ' mm');
+                            setMaterial(materialData[index.row]);
+                        }}>
+                        {materialData.map(renderOptionsMaterial)}
+                    </Select>
                     <Input
                         style={styles.input}
                         label="Weight (in g)"
@@ -230,14 +262,17 @@ function UpdateFilament({ navigation, route }) {
                         onSelect={index => {
                             setSelectedIndexProducer(index);
                             setSelectedValueProducer(
-                                producers[index.row]._id +
+                                producers[index.row].producerName +
                                     ' - ' +
                                     producers[index.row].emptyWeight +
-                                    ' g empty spool weight',
+                                    ' g empty spool weight' +
+                                    ' - Spool size: ' +
+                                    producers[index.row].spoolSize +
+                                    'g',
                             );
                             setProducer(producers[index.row]);
                         }}>
-                        {producers.map(renderOptions)}
+                        {producers.map(renderOptionsProducer)}
                     </Select>
                     <Button style={styles.btn} onPress={addFilament}>
                         Update
