@@ -363,7 +363,7 @@ function NewFilament({ navigation, route }) {
                         selectedIndex={selectedIndexMaterial}
                         onSelect={index => {
                             setSelectedIndexMaterial(index);
-                            setSelectedValueMaterial(materialData[index.row] + ' mm');
+                            setSelectedValueMaterial(materialData[index.row]);
                             setMaterial(materialData[index.row]);
                         }}>
                         {materialData.map(renderOptionsMaterial)}
