@@ -164,7 +164,15 @@ function UpdateFilament({ navigation, route }) {
     const renderOptionsProducer = producerData => (
         <SelectItem
             key={producerData}
-            title={producerData._id + ' - ' + producerData.emptyWeight + 'g empty spool weight'}
+            title={
+                producerData.producerName +
+                ' - ' +
+                producerData.emptyWeight +
+                'g empty spool weight' +
+                ' - Spool size: ' +
+                producerData.spoolSize +
+                'g'
+            }
         />
     );
 
