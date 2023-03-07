@@ -22,6 +22,7 @@ function ShowStock({ navigation, route }) {
             weight: 'dummy',
             diameter: 'dummy',
             material: 'dummy',
+            location: 'dummy',
             producer: {
                 producerName: 'dummy',
                 emptyWeight: 'dummy',
@@ -82,13 +83,14 @@ function ShowStock({ navigation, route }) {
             'Color',
             'Diameter (in mm)',
             'Material',
+            'Location',
             'Weight w/o spool\n(in g)',
             'Spool size (in g)',
             'Producer',
             'Opened on',
             'Last dried on',
         ],
-        widthArr: [200, 200, 200, 200, 200, 200, 200, 200, 200],
+        widthArr: [200, 200, 200, 200, 200, 200, 200, 200, 200, 200],
     };
 
     const switchTabContent = () => {
@@ -98,11 +100,16 @@ function ShowStock({ navigation, route }) {
         }
 
         if (selectedTab === 1) {
-            sortData('default');
+            sortData('material');
             return stockData.map(getRows);
         }
 
         if (selectedTab === 2) {
+            sortData('location');
+            return stockData.map(getRows);
+        }
+
+        if (selectedTab === 3) {
             sortData('lastDried');
             return stockData.map(getRows);
         }
@@ -140,15 +147,29 @@ function ShowStock({ navigation, route }) {
             });
         }
 
-        if (action === 'default') {
+        if (action === 'material') {
             return stockData.sort((a, b) => {
-                if (a._id > b._id) {
+                if (a.material > b.material) {
                     return 1;
                 }
-                if (a._id < b._id) {
+                if (a.material < b.material) {
                     return -1;
                 }
-                if (a._id === b._id) {
+                if (a.material === b.material) {
+                    return 0;
+                }
+            });
+        }
+
+        if (action === 'location') {
+            return stockData.sort((a, b) => {
+                if (a.location > b.location) {
+                    return 1;
+                }
+                if (a.location < b.location) {
+                    return -1;
+                }
+                if (a.location === b.location) {
                     return 0;
                 }
             });
@@ -161,6 +182,7 @@ function ShowStock({ navigation, route }) {
             data.color,
             data.diameter,
             data.material,
+            data.location,
             data.weight - data.producer.emptyWeight,
             data.producer.spoolSize,
             data.producer.producerName,
@@ -229,7 +251,8 @@ function ShowStock({ navigation, route }) {
                     setSelectedTab(index);
                 }}>
                 <BottomNavigationTab title="Color" />
-                <BottomNavigationTab title="Default" />
+                <BottomNavigationTab title="Material" />
+                <BottomNavigationTab title="Location" />
                 <BottomNavigationTab title="Last Dried" />
             </BottomNavigation>
         </>

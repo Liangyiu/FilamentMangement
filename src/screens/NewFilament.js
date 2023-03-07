@@ -34,8 +34,15 @@ function NewFilament({ navigation, route }) {
     const [selectedValueMaterial, setSelectedValueMaterial] = React.useState('Select a Material');
     const [selectedIndexColor, setSelectedIndexColor] = React.useState();
     const [selectedValueColor, setSelectedValueColor] = React.useState('Select a Color');
+    const [selectedIndexLocation, setSelectedIndexLocation] = React.useState();
+    const [selectedValueLocation, setSelectedValueLocation] = React.useState('Select a Location');
     const [color, setColor] = React.useState(undefined);
+    const [colorData, setColorData] = React.useState([]);
+    const [materialData, setMaterialData] = React.useState([]);
+    const [diameterData, setDiameterData] = React.useState([]);
+    const [locationData, setLocationData] = React.useState([]);
     const [diameter, setDiameter] = React.useState(undefined);
+    const [location, setLocation] = React.useState(undefined);
     const [material, setMaterial] = React.useState(undefined);
     const [weight, setWeight] = React.useState(undefined);
     const [producer, setProducer] = React.useState(undefined);
@@ -74,6 +81,146 @@ function NewFilament({ navigation, route }) {
 
         if (producers.length === 0) {
             getDataProducers();
+        }
+
+        async function getDataMaterial() {
+            const data = JSON.stringify({
+                collection: 'materials',
+                database: 'filament-management',
+                dataSource: 'Cluster0',
+            });
+
+            const config = {
+                method: 'post',
+                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Request-Headers': '*',
+                    'api-key': '***REMOVED***',
+                },
+                data: data,
+            };
+
+            try {
+                const response = await axios(config);
+
+                const materials = await response.data.documents.map(entry => {
+                    return entry._id;
+                });
+
+                setMaterialData(materials);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        if (materialData.length === 0) {
+            getDataMaterial();
+        }
+
+        async function getDataLocation() {
+            const data = JSON.stringify({
+                collection: 'locations',
+                database: 'filament-management',
+                dataSource: 'Cluster0',
+            });
+
+            const config = {
+                method: 'post',
+                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Request-Headers': '*',
+                    'api-key': '***REMOVED***',
+                },
+                data: data,
+            };
+
+            try {
+                const response = await axios(config);
+
+                const locations = await response.data.documents.map(entry => {
+                    return entry._id;
+                });
+
+                setLocationData(locations);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        if (locationData.length === 0) {
+            getDataLocation();
+        }
+
+        async function getDataDiameter() {
+            const data = JSON.stringify({
+                collection: 'diameters',
+                database: 'filament-management',
+                dataSource: 'Cluster0',
+            });
+
+            const config = {
+                method: 'post',
+                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Request-Headers': '*',
+                    'api-key': '***REMOVED***',
+                },
+                data: data,
+            };
+
+            try {
+                const response = await axios(config);
+
+                const diameters = await response.data.documents.map(entry => {
+                    return entry._id;
+                });
+
+                setDiameterData(diameters);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        if (diameterData.length === 0) {
+            getDataDiameter();
+        }
+
+        async function getDataColor() {
+            const data = JSON.stringify({
+                collection: 'colors',
+                database: 'filament-management',
+                dataSource: 'Cluster0',
+            });
+
+            const config = {
+                method: 'post',
+                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Request-Headers': '*',
+                    'api-key': '***REMOVED***',
+                },
+                data: data,
+            };
+
+            try {
+                const response = await axios(config);
+
+                const colors = await response.data.documents.map(entry => {
+                    return entry._id;
+                });
+
+                setColorData(colors);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        if (colorData.length === 0) {
+            getDataColor();
         }
 
         async function getDataForId() {
@@ -193,7 +340,7 @@ function NewFilament({ navigation, route }) {
         }
 
         if (diameter === undefined) {
-            showModal('⛔ Please enter a diameter!', 'warning');
+            showModal('⛔ Please select a diameter!', 'warning');
             return;
         }
 
@@ -203,7 +350,12 @@ function NewFilament({ navigation, route }) {
         }
 
         if (material === undefined) {
-            showModal('⛔ Please enter a material!', 'warning');
+            showModal('⛔ Please select a material!', 'warning');
+            return;
+        }
+
+        if (location === undefined) {
+            showModal('⛔ Please select a location!', 'warning');
             return;
         }
 
@@ -236,6 +388,7 @@ function NewFilament({ navigation, route }) {
                 color: color,
                 diameter: +diameter,
                 material: material,
+                location: location,
                 producer: producer,
                 weight: +weight,
                 lastDried: new Date(lastDried),
@@ -256,6 +409,7 @@ function NewFilament({ navigation, route }) {
             setSelectedIndexColor(new IndexPath(0));
             setSelectedIndexDiameter(new IndexPath(0));
             setSelectedIndexMaterial(new IndexPath(0));
+            setSelectedIndexLocation(new IndexPath(0));
 
             showModal('✅ Added new Filament!', 'success');
         } catch (error) {
@@ -302,25 +456,10 @@ function NewFilament({ navigation, route }) {
         />
     );
 
-    const diameterData = [1.75, 3];
     const renderOptionsDiameter = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
-
-    const materialData = [
-        'ABS Pro Flame Retardant',
-        'ApolloX',
-        'ASA',
-        'PETG',
-        'PLA',
-        'TPU (92 Shore A)',
-        'ABS',
-        'Nylon',
-        'PC',
-        'Peek',
-    ];
     const renderOptionsMaterial = materialData => <SelectItem key={materialData} title={materialData} />;
-
-    const colorData = ['Black', 'White', 'Gray', 'Silver', 'Natural', 'Red', 'Green', 'Blue', 'Yellow', 'Orange'];
     const renderOptionsColor = colorData => <SelectItem key={colorData} title={colorData} />;
+    const renderOptionsLocations = locationData => <SelectItem key={locationData} title={locationData} />;
 
     return (
         <>
@@ -368,6 +507,19 @@ function NewFilament({ navigation, route }) {
                         }}>
                         {materialData.map(renderOptionsMaterial)}
                     </Select>
+                    <Select
+                        label="Location"
+                        style={styles.select}
+                        placeholder="Select a Location"
+                        value={selectedValueLocation}
+                        selectedIndex={selectedIndexLocation}
+                        onSelect={index => {
+                            setSelectedIndexLocation(index);
+                            setSelectedValueLocation(locationData[index.row]);
+                            setLocation(locationData[index.row]);
+                        }}>
+                        {locationData.map(renderOptionsLocations)}
+                    </Select>
                     <Input
                         style={styles.input}
                         label="Weight (in g)"
@@ -414,8 +566,7 @@ function NewFilament({ navigation, route }) {
                 </Layout>
                 <Modal
                     visible={visibleOne}
-                    backdropStyle={styles.backdrop}
-                    onBackdropPress={() => setVisibleOne(false)}>
+                    backdropStyle={styles.backdrop}>
                     <Card disabled={true}>
                         <Text style={styles.alertText} category="h6">
                             {modalText}
@@ -431,6 +582,7 @@ function NewFilament({ navigation, route }) {
                                         color: color,
                                         diameter: diameter,
                                         material: material,
+                                        location: location,
                                         weight: weight,
                                         producer: producer,
                                         lastDried: lastDried.toString(),
@@ -443,6 +595,12 @@ function NewFilament({ navigation, route }) {
                                         selectedValueDiameter: selectedValueDiameter,
                                         selectedIndexMaterial: selectedIndexMaterial,
                                         selectedValueMaterial: selectedValueMaterial,
+                                        selectedIndexLocation: selectedIndexLocation,
+                                        selectedValueLocation: selectedValueLocation,
+                                        locationData: locationData,
+                                        materialData: materialData,
+                                        colorData: colorData,
+                                        diameterData: diameterData
                                     });
                                 }}>
                                 Update

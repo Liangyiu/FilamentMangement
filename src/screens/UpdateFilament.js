@@ -31,10 +31,17 @@ function UpdateFilament({ navigation, route }) {
     const [selectedValueMaterial, setSelectedValueMaterial] = React.useState(route.params.selectedValueMaterial);
     const [selectedIndexColor, setSelectedIndexColor] = React.useState(route.params.selectedIndexColor);
     const [selectedValueColor, setSelectedValueColor] = React.useState(route.params.selectedValueColor);
+    const [selectedIndexLocation, setSelectedIndexLocation] = React.useState(route.params.selectedIndexLocation);
+    const [selectedValueLocation, setSelectedValueLocation] = React.useState(route.params.selectedValueLocation);
+    const [colorData, setColorData] = React.useState(route.params.colorData);
+    const [materialData, setMaterialData] = React.useState(route.params.materialData);
+    const [diameterData, setDiameterData] = React.useState(route.params.diameterData);
+    const [locationData, setLocationData] = React.useState(route.params.locationData);
     const [color, setColor] = React.useState(route.params.color);
     const [diameter, setDiameter] = React.useState(route.params.diameter);
     const [material, setMaterial] = React.useState(route.params.material);
     const [weight, setWeight] = React.useState(route.params.weight);
+    const [location, setLocation] = React.useState(route.params.location);
     const [producers, setProducers] = React.useState(route.params.producers);
     const [lastDried, setLastDried] = React.useState(new Date(route.params.lastDried));
     const [openingDate, setOpeningDate] = React.useState(new Date(route.params.openingDate));
@@ -55,6 +62,7 @@ function UpdateFilament({ navigation, route }) {
                     color: color,
                     diameter: +diameter,
                     material: material,
+                    location: location,
                     weight: +weight,
                     openingDate: openingDate,
                     lastDried: lastDried,
@@ -90,17 +98,22 @@ function UpdateFilament({ navigation, route }) {
         }
 
         if (diameter === undefined) {
-            showModal('⛔ Please enter a diameter!', 'warning');
+            showModal('⛔ Please select a diameter!', 'warning');
             return;
         }
 
         if (material === undefined) {
-            showModal('⛔ Please enter a material!', 'warning');
+            showModal('⛔ Please select a material!', 'warning');
             return;
         }
 
         if (weight === undefined) {
             showModal('⛔ Please enter a weight!', 'warning');
+            return;
+        }
+
+        if (location === undefined) {
+            showModal('⛔ Please select a location!', 'warning');
             return;
         }
 
@@ -113,6 +126,7 @@ function UpdateFilament({ navigation, route }) {
             showModal('⛔ Please select an opening date!', 'warning');
             return;
         }
+
         if (lastDried === undefined) {
             showModal('⛔ Please select a date for last dried on!', 'warning');
             return;
@@ -176,25 +190,10 @@ function UpdateFilament({ navigation, route }) {
         />
     );
 
-    const diameterData = [1.75, 3];
     const renderOptionsDiameter = diameterData => <SelectItem key={diameterData} title={diameterData + ' mm'} />;
-
-    const materialData = [
-        'ABS Pro Flame Retardant',
-        'ApolloX',
-        'ASA',
-        'PETG',
-        'PLA',
-        'TPU (92 Shore A)',
-        'ABS',
-        'Nylon',
-        'PC',
-        'Peek',
-    ];
     const renderOptionsMaterial = materialData => <SelectItem key={materialData} title={materialData} />;
-
-    const colorData = ['Black', 'White', 'Gray', 'Silver', 'Natural', 'Red', 'Green', 'Blue', 'Yellow', 'Orange'];
     const renderOptionsColor = colorData => <SelectItem key={colorData} title={colorData} />;
+    const renderOptionsLocations = locationData => <SelectItem key={locationData} title={locationData} />;
 
     return (
         <>
@@ -241,6 +240,19 @@ function UpdateFilament({ navigation, route }) {
                             setMaterial(materialData[index.row]);
                         }}>
                         {materialData.map(renderOptionsMaterial)}
+                    </Select>
+                    <Select
+                        label="Location"
+                        style={styles.select}
+                        placeholder="Select a Location"
+                        value={selectedValueLocation}
+                        selectedIndex={selectedIndexLocation}
+                        onSelect={index => {
+                            setSelectedIndexLocation(index);
+                            setSelectedValueLocation(locationData[index.row]);
+                            setLocation(locationData[index.row]);
+                        }}>
+                        {locationData.map(renderOptionsLocations)}
                     </Select>
                     <Input
                         style={styles.input}

@@ -28,6 +28,7 @@ function TagInfo({ navigation, route }) {
     const [producer, setProducer] = React.useState('none');
     const [weight, setWeight] = React.useState(0);
     const [spoolSize, setSpoolSize] = React.useState(0);
+    const [location, setLocation] = React.useState('none');
     const [visible, setVisible] = React.useState(false);
 
     React.useEffect(() => {
@@ -66,6 +67,7 @@ function TagInfo({ navigation, route }) {
                 setOpeningDate(new Date(tagInfo.openingDate));
                 setProducer(tagInfo.producer.producerName);
                 setWeight(tagInfo.weight - tagInfo.producer.emptyWeight);
+                setLocation(tagInfo.location);
             } catch (e) {
                 console.log(e);
             }
@@ -130,6 +132,7 @@ function TagInfo({ navigation, route }) {
                     <Input style={styles.input} disabled={true} label="Color" value={color} />
                     <Input style={styles.input} disabled={true} label="Diameter" value={diameter.toString() + ' mm'} />
                     <Input style={styles.input} disabled={true} label="Material" value={material} />
+                    <Input style={styles.input} disabled={true} label="Location" value={location} />
                     <Input style={styles.input} disabled={true} label="Producer" value={producer} />
                     <Input
                         style={styles.input}
