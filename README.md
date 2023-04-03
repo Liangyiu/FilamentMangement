@@ -22,6 +22,14 @@
 7) Now you should be ready to make changes to the source code. To be able to see the changes in the app you need an Android device with Android 12 or higher, NFC and USB-Debugging enabled. Connect the device to your PC and run the command `react-native run-android`. If you encounter an error along the lines of `required java sdk version not installed/found` continue with step 8.
 8) ***(optional)*** If you get an error similar to the one described in step 7, you will need to installed the described java sdk version and add it to you PC's path environment
 
-
-
+# Export DB-Data to CSV
+- Download [MongoDB-Compass](https://www.mongodb.com/products/compass)
+- Login to you database
+- Navigate to the desired document collection
+- Click on *Export Collection*
+![export_collection](/documentation/screenshots/2_collection_download.png)
+- Select *Export Full Collection*
+![col_download](/documentation/screenshots/2_collection_download_2.png)
+- Choose the desired *fields* to export
+- Select CSV for the *Export File Type*, choose a location and click on *Export*
 
