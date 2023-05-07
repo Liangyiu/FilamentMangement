@@ -46,11 +46,21 @@ function UpdateFilament({ navigation, route }) {
     const [lastDried, setLastDried] = React.useState(new Date(route.params.lastDried));
     const [openingDate, setOpeningDate] = React.useState(new Date(route.params.openingDate));
     const [producer, setProducer] = React.useState(route.params.producer);
+    const [oldData, setOldData] = React.useState({
+        color: route.params.color,
+        diameter: route.params.diameter,
+        material: route.params.material,
+        weight: route.params.weight,
+        location: route.params.location,
+        lastDried: new Date(route.params.lastDried),
+        openingDate: new Date(route.params.openingDate),
+        producer: route.params.producer
+    })
 
     const BackIcon = <Icon name="arrow-back" />;
 
     const pushFilamentToDb = async filamentData => {
-        const data = JSON.stringify({
+        let data = JSON.stringify({
             collection: 'stock',
             database: 'filament-management',
             dataSource: 'Cluster0',
@@ -71,9 +81,47 @@ function UpdateFilament({ navigation, route }) {
             },
         });
 
-        const config = {
+        let config = {
             method: 'post',
             url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/updateOne',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Request-Headers': '*',
+                'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+            },
+            data: data,
+        };
+
+        try {
+            await axios(config);
+        } catch (e) {
+            console.log(e);
+        }
+
+        data = JSON.stringify({
+            collection: 'events',
+            database: 'filament-management',
+            dataSource: 'Cluster0',
+            document: {
+                event_type: 'updated-filament',
+                timestamp: new Date(),
+                oldData: oldData,
+                updatedData: {
+                    color: color,
+                    diameter: +diameter,
+                    material: material,
+                    location: location,
+                    weight: +weight,
+                    openingDate: openingDate,
+                    lastDried: lastDried,
+                    producer: producer,
+                }
+            },
+        });
+
+        config = {
+            method: 'post',
+            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',

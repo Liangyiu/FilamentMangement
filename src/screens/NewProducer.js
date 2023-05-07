@@ -75,14 +75,14 @@ function NewProducer({ navigation, route }) {
     };
 
     const pushProducerToDb = async producerData => {
-        const data = JSON.stringify({
+        let data = JSON.stringify({
             collection: 'producers',
             database: 'filament-management',
             dataSource: 'Cluster0',
             document: producerData,
         });
 
-        const config = {
+        let config = {
             method: 'post',
             url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
             headers: {
@@ -94,7 +94,35 @@ function NewProducer({ navigation, route }) {
         };
 
         try {
-            return await axios(config);
+            await axios(config);
+        } catch (e) {
+            console.log(e);
+        }
+
+        data = JSON.stringify({
+            collection: 'events',
+            database: 'filament-management',
+            dataSource: 'Cluster0',
+            document: {
+                event_type: 'added-producer',
+                timestamp: new Date(),
+                data: producerData
+            },
+        });
+
+        config = {
+            method: 'post',
+            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Request-Headers': '*',
+                'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+            },
+            data: data,
+        };
+
+        try {
+            await axios(config);
         } catch (e) {
             console.log(e);
         }

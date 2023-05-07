@@ -249,6 +249,7 @@ function NewFilament({ navigation, route }) {
 
                 const tagData = response.data.documents[0];
 
+                setLocation(tagData.location)
                 setColor(tagData.color);
                 setDiameter(tagData.diameter);
                 setProducer(tagData.producer);
@@ -306,14 +307,42 @@ function NewFilament({ navigation, route }) {
     });
 
     const pushFilamentToDb = async filamentData => {
-        const data = JSON.stringify({
+        let data = JSON.stringify({
             collection: 'stock',
             database: 'filament-management',
             dataSource: 'Cluster0',
             document: filamentData,
         });
 
-        const config = {
+        let config = {
+            method: 'post',
+            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Request-Headers': '*',
+                'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+            },
+            data: data,
+        };
+
+        try {
+            await axios(config);
+        } catch (e) {
+            console.log(e);
+        }
+
+        data = JSON.stringify({
+            collection: 'events',
+            database: 'filament-management',
+            dataSource: 'Cluster0',
+            document: {
+                event_type: 'added-filament',
+                timestamp: new Date(),
+                data: filamentData
+            },
+        });
+
+        config = {
             method: 'post',
             url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
             headers: {
