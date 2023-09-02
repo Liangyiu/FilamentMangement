@@ -13,11 +13,13 @@ import {
     Input,
     Select,
     SelectItem,
+    Spinner,
     IndexPath,
     Datepicker,
 } from '@ui-kitten/components';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
+const qs = require('qs');
 
 function NewFilament({ navigation, route }) {
     const [filamentIds, setFilamentIds] = React.useState([]);
@@ -48,8 +50,39 @@ function NewFilament({ navigation, route }) {
     const [producer, setProducer] = React.useState(undefined);
     const [lastDried, setLastDried] = React.useState(undefined);
     const [openingDate, setOpeningDate] = React.useState(undefined);
+    const [showLoaderIcon, setShowLoaderIcon] = React.useState(false);
 
     const BackIcon = <Icon name="arrow-back" />;
+
+    const renderIcon = (props): React.ReactElement => (
+        <TouchableWithoutFeedback onPress={refreshWeight}>
+            <Icon {...props} name="refresh-outline" />
+        </TouchableWithoutFeedback>
+    );
+
+    const renderLoader = (props): React.ReactElement => <Spinner />;
+
+    function refreshWeight() {
+        setShowLoaderIcon(true);
+
+        const params = qs.stringify({
+            db: 'filament_weight',
+            q: 'SELECT weight FROM weight_average ORDER BY time DESC LIMIT 1',
+        });
+
+        axios
+            .get(
+                'http://192.168.178.110:8086/query?q=SELECT%20weight%20FROM%20weight_average%20ORDER%20BY%20time%20DESC%20LIMIT%201&db=filament_weight',
+            )
+            .then(response => {
+                setWeight(response.data.results[0].series[0].values[0][1].toString()); //parse the response to only get the latest average weight
+                setShowLoaderIcon(false);
+            })
+            .catch(e => {
+                console.log(e);
+                setShowLoaderIcon(false);
+            });
+    }
 
     React.useEffect(() => {
         async function getDataProducers() {
@@ -249,7 +282,7 @@ function NewFilament({ navigation, route }) {
 
                 const tagData = response.data.documents[0];
 
-                setLocation(tagData.location)
+                setLocation(tagData.location);
                 setColor(tagData.color);
                 setDiameter(tagData.diameter);
                 setProducer(tagData.producer);
@@ -338,7 +371,7 @@ function NewFilament({ navigation, route }) {
             document: {
                 event_type: 'added-filament',
                 timestamp: new Date(),
-                data: filamentData
+                data: filamentData,
             },
         });
 
@@ -554,6 +587,7 @@ function NewFilament({ navigation, route }) {
                         label="Weight (in g)"
                         placeholder="600"
                         value={weight}
+                        accessoryRight={showLoaderIcon ? renderLoader : renderIcon}
                         onChangeText={input => setWeight(input)}
                     />
                     <Datepicker
@@ -593,9 +627,7 @@ function NewFilament({ navigation, route }) {
                         Add
                     </Button>
                 </Layout>
-                <Modal
-                    visible={visibleOne}
-                    backdropStyle={styles.backdrop}>
+                <Modal visible={visibleOne} backdropStyle={styles.backdrop}>
                     <Card disabled={true}>
                         <Text style={styles.alertText} category="h6">
                             {modalText}
@@ -629,7 +661,7 @@ function NewFilament({ navigation, route }) {
                                         locationData: locationData,
                                         materialData: materialData,
                                         colorData: colorData,
-                                        diameterData: diameterData
+                                        diameterData: diameterData,
                                     });
                                 }}>
                                 Update
