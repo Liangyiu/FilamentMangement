@@ -16,6 +16,7 @@
     "@ui-kitten/components": "^5.1.2",
     "@ui-kitten/eva-icons": "^5.1.2",
     "axios": "^1.2.1",
+    "qs": "^6.11.2",
     "react": "18.1.0",
     "react-native": "0.70.6",
     "react-native-nfc-manager": "^3.14.1",
