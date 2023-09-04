@@ -19,7 +19,6 @@ import {
 } from '@ui-kitten/components';
 import { StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
-const qs = require('qs');
 
 function NewFilament({ navigation, route }) {
     const [filamentIds, setFilamentIds] = React.useState([]);
@@ -64,11 +63,6 @@ function NewFilament({ navigation, route }) {
 
     function refreshWeight() {
         setShowLoaderIcon(true);
-
-        const params = qs.stringify({
-            db: 'filament_weight',
-            q: 'SELECT weight FROM weight_average ORDER BY time DESC LIMIT 1',
-        });
 
         axios
             .get(

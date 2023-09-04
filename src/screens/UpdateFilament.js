@@ -13,6 +13,7 @@ import {
     Input,
     Select,
     SelectItem,
+    Spinner,
     IndexPath,
     Datepicker,
 } from '@ui-kitten/components';
@@ -55,9 +56,35 @@ function UpdateFilament({ navigation, route }) {
         lastDried: new Date(route.params.lastDried),
         openingDate: new Date(route.params.openingDate),
         producer: route.params.producer
-    })
+    });
+    const [showLoaderIcon, setShowLoaderIcon] = React.useState(false);
 
     const BackIcon = <Icon name="arrow-back" />;
+
+    const renderIcon = (props): React.ReactElement => (
+        <TouchableWithoutFeedback onPress={refreshWeight}>
+            <Icon {...props} name="refresh-outline" />
+        </TouchableWithoutFeedback>
+    );
+
+    const renderLoader = (props): React.ReactElement => <Spinner />;
+
+    function refreshWeight() {
+        setShowLoaderIcon(true);
+
+        axios
+            .get(
+                'http://192.168.178.110:8086/query?q=SELECT%20weight%20FROM%20weight_average%20ORDER%20BY%20time%20DESC%20LIMIT%201&db=filament_weight',
+            )
+            .then(response => {
+                setWeight(response.data.results[0].series[0].values[0][1].toString()); //parse the response to only get the latest average weight
+                setShowLoaderIcon(false);
+            })
+            .catch(e => {
+                console.log(e);
+                setShowLoaderIcon(false);
+            });
+    }
 
     const pushFilamentToDb = async filamentData => {
         let data = JSON.stringify({
@@ -307,6 +334,7 @@ function UpdateFilament({ navigation, route }) {
                         label="Weight (in g)"
                         placeholder="600"
                         value={weight}
+                        accessoryRight={showLoaderIcon ? renderLoader : renderIcon}
                         onChangeText={input => setWeight(input)}
                     />
                     <Datepicker
