@@ -643,15 +643,22 @@ function NewFilament({ navigation, route }) {
                                         lastDried: lastDried.toString(),
                                         openingDate: openingDate.toString(),
                                         selectedIndexProducer: selectedIndexProducer,
-                                        selectedValueProducer: selectedValueProducer,
+                                        selectedValueProducer:
+                                            producer.producerName +
+                                            ' - ' +
+                                            producer.emptyWeight +
+                                            ' g empty spool weight' +
+                                            ' - Spool size: ' +
+                                            producer.spoolSize +
+                                            'g',
                                         selectedIndexColor: selectedIndexColor,
-                                        selectedValueColor: selectedValueColor,
+                                        selectedValueColor: color,
                                         selectedIndexDiameter: selectedIndexDiameter,
-                                        selectedValueDiameter: selectedValueDiameter,
+                                        selectedValueDiameter: diameter,
                                         selectedIndexMaterial: selectedIndexMaterial,
-                                        selectedValueMaterial: selectedValueMaterial,
+                                        selectedValueMaterial: material,
                                         selectedIndexLocation: selectedIndexLocation,
-                                        selectedValueLocation: selectedValueLocation,
+                                        selectedValueLocation: location,
                                         locationData: locationData,
                                         materialData: materialData,
                                         colorData: colorData,

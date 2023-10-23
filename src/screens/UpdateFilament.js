@@ -19,6 +19,7 @@ import {
 } from '@ui-kitten/components';
 import { StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
+import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 
 function UpdateFilament({ navigation, route }) {
     const [visibleOne, setVisibleOne] = React.useState(false);
@@ -55,7 +56,7 @@ function UpdateFilament({ navigation, route }) {
         location: route.params.location,
         lastDried: new Date(route.params.lastDried),
         openingDate: new Date(route.params.openingDate),
-        producer: route.params.producer
+        producer: route.params.producer,
     });
     const [showLoaderIcon, setShowLoaderIcon] = React.useState(false);
 
@@ -142,7 +143,7 @@ function UpdateFilament({ navigation, route }) {
                     openingDate: openingDate,
                     lastDried: lastDried,
                     producer: producer,
-                }
+                },
             },
         });
 
