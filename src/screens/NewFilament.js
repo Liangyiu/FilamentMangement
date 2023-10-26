@@ -66,7 +66,7 @@ function NewFilament({ navigation, route }) {
 
         axios
             .get(
-                'http://192.168.178.110:8086/query?q=SELECT%20weight%20FROM%20weight_average%20ORDER%20BY%20time%20DESC%20LIMIT%201&db=filament_weight',
+                `${route.params.influxDb}/query?q=SELECT%20weight%20FROM%20weight_average%20ORDER%20BY%20time%20DESC%20LIMIT%201&db=filament_weight`,
             )
             .then(response => {
                 setWeight(response.data.results[0].series[0].values[0][1].toString()); //parse the response to only get the latest average weight
@@ -88,7 +88,7 @@ function NewFilament({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -119,7 +119,7 @@ function NewFilament({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -154,7 +154,7 @@ function NewFilament({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -189,7 +189,7 @@ function NewFilament({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -224,7 +224,7 @@ function NewFilament({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -262,7 +262,7 @@ function NewFilament({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -301,7 +301,7 @@ function NewFilament({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -343,7 +343,7 @@ function NewFilament({ navigation, route }) {
 
         let config = {
             method: 'post',
-            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
+            url: `${route.params.mongoDb}/action/insertOne`,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
@@ -371,7 +371,7 @@ function NewFilament({ navigation, route }) {
 
         config = {
             method: 'post',
-            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
+            url: `${route.params.mongoDb}/action/insertOne`,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',

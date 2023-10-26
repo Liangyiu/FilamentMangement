@@ -46,7 +46,7 @@ function ShowStock({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -115,12 +115,12 @@ function ShowStock({ navigation, route }) {
         }
     };
 
-    const sortData = (action) => {
+    const sortData = action => {
         if (action === 'lastDried') {
             return stockData.sort((a, b) => {
                 const aTime = new Date(a.lastDried).getTime();
                 const bTime = new Date(b.lastDried).getTime();
-    
+
                 if (aTime > bTime) {
                     return 1;
                 }
@@ -133,7 +133,7 @@ function ShowStock({ navigation, route }) {
             });
         }
 
-        if (action === 'color'){
+        if (action === 'color') {
             return stockData.sort((a, b) => {
                 if (a.color > b.color) {
                     return 1;

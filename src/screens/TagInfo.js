@@ -44,7 +44,7 @@ function TagInfo({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/findOne',
+                url: `${route.params.mongoDb}/action/findOne`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -94,7 +94,7 @@ function TagInfo({ navigation, route }) {
 
         const config = {
             method: 'post',
-            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/deleteOne',
+            url: `${route.params.mongoDb}/action/deleteOne`,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
