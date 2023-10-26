@@ -39,7 +39,7 @@ function NewProducer({ navigation, route }) {
 
             const config = {
                 method: 'post',
-                url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/find',
+                url: `${route.params.mongoDb}/action/find`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
@@ -84,7 +84,7 @@ function NewProducer({ navigation, route }) {
 
         let config = {
             method: 'post',
-            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
+            url: `${route.params.mongoDb}/action/insertOne`,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
@@ -106,13 +106,13 @@ function NewProducer({ navigation, route }) {
             document: {
                 event_type: 'added-producer',
                 timestamp: new Date(),
-                data: producerData
+                data: producerData,
             },
         });
 
         config = {
             method: 'post',
-            url: 'https://data.mongodb-api.com/app/data-ynvst/endpoint/data/v1/action/insertOne',
+            url: `${route.params.mongoDb}/action/insertOne`,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
@@ -253,10 +253,12 @@ function NewProducer({ navigation, route }) {
                     <Text style={styles.alertText} category="h6">
                         {modalText}
                     </Text>
-                    <Button style={styles.btn} onPress={() => {
-                        setVisibleTwo(false);
-                        navigateBack();
-                    }}>
+                    <Button
+                        style={styles.btn}
+                        onPress={() => {
+                            setVisibleTwo(false);
+                            navigateBack();
+                        }}>
                         Dismiss
                     </Button>
                 </Card>
