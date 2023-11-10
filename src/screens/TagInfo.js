@@ -48,7 +48,7 @@ function TagInfo({ navigation, route }) {
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
-                    'api-key': '***REMOVED***',
+                    'apiKey': route.params.mongoDbApiKey,
                 },
                 data: data,
             };
@@ -98,7 +98,7 @@ function TagInfo({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'api-key': '***REMOVED***',
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };
