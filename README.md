@@ -24,7 +24,7 @@
 
 # Export DB-Data to CSV
 - Download [MongoDB-Compass](https://www.mongodb.com/products/compass)
-- Login to you database
+- Log in to you database
 - Navigate to the desired document collection
 - Click on *Export Collection*
 ![export_collection](/documentation/screenshots/2_collection_download.png)
