@@ -75,7 +75,7 @@ function UpdateFilament({ navigation, route }) {
 
         axios
             .get(
-                `${route.params.influxDb}/query?q=SELECT%20weight%20FROM%20weight_average%20ORDER%20BY%20time%20DESC%20LIMIT%201&db=filament_weight`,
+                `${route.params.influxDb}/query?q=SELECT%20weight%20FROM%20weight%20ORDER%20BY%20time%20DESC%20LIMIT%201&db=weight`,
             )
             .then(response => {
                 setWeight(response.data.results[0].series[0].values[0][1].toString()); //parse the response to only get the latest average weight
@@ -115,7 +115,7 @@ function UpdateFilament({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };
@@ -153,7 +153,7 @@ function UpdateFilament({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };

@@ -23,7 +23,9 @@ function Home({ navigation }) {
     const [nfcReader, updateNfc] = React.useState(false);
     const [visible, setVisible] = React.useState(false);
     const [mongoDbDataApi, setMongoDbDataApi] = React.useState('');
+    const [mongoDbDataApiKey, setMongoDbDataApiKey] = React.useState('');
     const [influxDbIp, setInfluxDbIp] = React.useState('');
+    const [influxDbToken, setInfluxDbToken] = React.useState('');
     const [gotData, setGotData] = React.useState(false);
     const promptRef = React.useRef();
     let tag = undefined;
@@ -36,9 +38,19 @@ function Home({ navigation }) {
                     setMongoDbDataApi(value);
                 }
 
+                value = await AsyncStorage.getItem('mongoDbDataApiKey');
+                if (value !== null) {
+                    setMongoDbDataApiKey(value);
+                }
+
                 value = await AsyncStorage.getItem('influxDbIp');
                 if (value !== null) {
                     setInfluxDbIp(value);
+                }
+
+                value = await AsyncStorage.getItem('influxDbToken');
+                if (value !== null) {
+                    setInfluxDbToken(value);
                 }
 
                 setGotData(true);
@@ -77,15 +89,33 @@ function Home({ navigation }) {
         }
 
         if (tag && option === 'info') {
-            return navigation.navigate('TagInfo', { tagId: tag, mongoDb: mongoDbDataApi, influxDb: influxDbIp });
+            return navigation.navigate('TagInfo', {
+                tagId: tag,
+                mongoDb: mongoDbDataApi,
+                mongoDbApiKey: mongoDbDataApiKey,
+                influxDb: influxDbIp,
+                influxDbToken: influxDbToken,
+            });
         }
 
         if (tag && option === 'newFilament') {
-            return navigation.navigate('NewFilament', { tagId: tag, mongoDb: mongoDbDataApi, influxDb: influxDbIp });
+            return navigation.navigate('NewFilament', {
+                tagId: tag,
+                mongoDb: mongoDbDataApi,
+                mongoDbApiKey: mongoDbDataApiKey,
+                influxDb: influxDbIp,
+                influxDbToken: influxDbToken,
+            });
         }
 
         if (tag && option === 'updateFilament') {
-            return navigation.navigate('NewFilament', { tagId: tag, mongoDb: mongoDbDataApi, influxDb: influxDbIp });
+            return navigation.navigate('NewFilament', {
+                tagId: tag,
+                mongoDb: mongoDbDataApi,
+                mongoDbApiKey: mongoDbDataApiKey,
+                influxDb: influxDbIp,
+                influxDbToken: influxDbToken,
+            });
         }
     }
 
@@ -98,7 +128,9 @@ function Home({ navigation }) {
     const changeSettings = async () => {
         try {
             await AsyncStorage.setItem('mongoDbDataApi', mongoDbDataApi);
+            await AsyncStorage.setItem('mongoDbDataApiKey', mongoDbDataApiKey);
             await AsyncStorage.setItem('influxDbIp', influxDbIp);
+            await AsyncStorage.setItem('influxDbToken', influxDbToken);
         } catch (e) {
             console.log(e);
         }
@@ -119,7 +151,12 @@ function Home({ navigation }) {
                 <Button
                     style={styles.btn}
                     onPress={() => {
-                        navigation.navigate('ShowStock', { mongoDb: mongoDbDataApi, influxDb: influxDbIp });
+                        navigation.navigate('ShowStock', {
+                            mongoDb: mongoDbDataApi,
+                            mongoDbApiKey: mongoDbDataApiKey,
+                            influxDb: influxDbIp,
+                            influxDbToken: influxDbToken,
+                        });
                     }}>
                     Show Stock
                 </Button>
@@ -133,7 +170,12 @@ function Home({ navigation }) {
                 <Button
                     style={styles.btn}
                     onPress={() => {
-                        navigation.navigate('NewProducer');
+                        navigation.navigate('NewProducer', {
+                            mongoDb: mongoDbDataApi,
+                            mongoDbApiKey: mongoDbDataApiKey,
+                            influxDb: influxDbIp,
+                            influxDbToken: influxDbToken,
+                        });
                     }}>
                     Add Filament-Producer
                 </Button>
@@ -151,17 +193,31 @@ function Home({ navigation }) {
                     </Text>
                     <Input
                         style={styles.input}
-                        label="MongoDB Data Api"
+                        label="MongoDB Data Api Endpoint"
                         value={mongoDbDataApi}
                         placeholder="https://data.mongodb-api.com/app/data-abcdef"
                         onChangeText={input => setMongoDbDataApi(input)}
                     />
                     <Input
                         style={styles.input}
-                        label="InfluxDB IP + Port"
+                        label="MongoDB Data Api Key"
+                        value={mongoDbDataApiKey}
+                        placeholder="abcdf12345"
+                        onChangeText={input => setMongoDbDataApiKey(input)}
+                    />
+                    <Input
+                        style={styles.input}
+                        label="InfluxDB IP + Port(if needed)"
                         value={influxDbIp}
                         placeholder="http://192.168.178.110:8086"
                         onChangeText={input => setInfluxDbIp(input)}
+                    />
+                    <Input
+                        style={styles.input}
+                        label="InfluxDB Api Token"
+                        value={influxDbToken}
+                        placeholder="testtoken123"
+                        onChangeText={input => setInfluxDbToken(input)}
                     />
                     <ButtonGroup style={styles.btnWrapper}>
                         <Button

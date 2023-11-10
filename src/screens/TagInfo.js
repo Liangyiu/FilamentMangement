@@ -48,7 +48,7 @@ function TagInfo({ navigation, route }) {
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
-                    'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+                    'apiKey': route.params.mongoDbApiKey,
                 },
                 data: data,
             };
@@ -98,7 +98,7 @@ function TagInfo({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'api-key': 'BvKSUxaAF5XdlN3ZTB1ZQoX9tMeE9pIOtezrtOzU6dWboB2HzX6obu0gcgo9u6Y2',
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };
