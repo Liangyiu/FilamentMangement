@@ -108,6 +108,44 @@ function TagInfo({ navigation, route }) {
         } catch (e) {
             console.log(e);
         }
+
+        data = JSON.stringify({
+            collection: 'events',
+            database: 'filament-management',
+            dataSource: 'Cluster0',
+            document: {
+                event_type: 'deleted-filament',
+                timestamp: new Date(),
+                oldData: {
+                    color: color,
+                    diameter: +diameter,
+                    material: material,
+                    location: location,
+                    weight: +weight,
+                    openingDate: openingDate,
+                    lastDried: lastDried,
+                    producer: producer,
+                },
+                usedFilament: +weight,
+            },
+        });
+
+        config = {
+            method: 'post',
+            url: `${route.params.mongoDb}/action/insertOne`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Request-Headers': '*',
+                'apiKey': route.params.mongoDbApiKey,
+            },
+            data: data,
+        };
+
+        try {
+            return await axios(config);
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const showModal = () => {

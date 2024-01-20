@@ -115,7 +115,7 @@ function UpdateFilament({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'apiKey': route.params.mongoDbApiKey,
+                apiKey: route.params.mongoDbApiKey,
             },
             data: data,
         };
@@ -133,7 +133,16 @@ function UpdateFilament({ navigation, route }) {
             document: {
                 event_type: 'updated-filament',
                 timestamp: new Date(),
-                oldData: oldData,
+                oldData: {
+                    color: oldData.color,
+                    diameter: +oldData.diameter,
+                    material: oldData.material,
+                    location: oldData.location,
+                    weight: +oldData.weight,
+                    openingDate: oldData.openingDate,
+                    lastDried: oldData.lastDried,
+                    producer: oldData.producer,
+                },
                 updatedData: {
                     color: color,
                     diameter: +diameter,
@@ -144,6 +153,7 @@ function UpdateFilament({ navigation, route }) {
                     lastDried: lastDried,
                     producer: producer,
                 },
+                usedFilament: +oldData.weight - +oldData.producer.emptyWeight - +weight,
             },
         });
 
@@ -153,7 +163,7 @@ function UpdateFilament({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'apiKey': route.params.mongoDbApiKey,
+                apiKey: route.params.mongoDbApiKey,
             },
             data: data,
         };
