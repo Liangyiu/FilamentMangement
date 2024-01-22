@@ -153,7 +153,7 @@ function UpdateFilament({ navigation, route }) {
                     lastDried: lastDried,
                     producer: producer,
                 },
-                usedFilament: +oldData.weight - +oldData.producer.emptyWeight - +weight,
+                usedFilament: +oldData.weight - +weight,
             },
         });
 
