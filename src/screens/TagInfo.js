@@ -30,6 +30,7 @@ function TagInfo({ navigation, route }) {
     const [spoolSize, setSpoolSize] = React.useState(0);
     const [location, setLocation] = React.useState('none');
     const [visible, setVisible] = React.useState(false);
+    const [producerObj, setProducerObj] = React.useState(undefined);
 
     React.useEffect(() => {
         async function getData(id) {
@@ -48,7 +49,7 @@ function TagInfo({ navigation, route }) {
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Request-Headers': '*',
-                    'apiKey': route.params.mongoDbApiKey,
+                    apiKey: route.params.mongoDbApiKey,
                 },
                 data: data,
             };
@@ -68,6 +69,7 @@ function TagInfo({ navigation, route }) {
                 setProducer(tagInfo.producer.producerName);
                 setWeight(tagInfo.weight - tagInfo.producer.emptyWeight);
                 setLocation(tagInfo.location);
+                setProducerObj(tagInfo.producer);
             } catch (e) {
                 console.log(e);
             }
@@ -98,7 +100,7 @@ function TagInfo({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'apiKey': route.params.mongoDbApiKey,
+                apiKey: route.params.mongoDbApiKey,
             },
             data: data,
         };
@@ -124,9 +126,9 @@ function TagInfo({ navigation, route }) {
                     weight: +weight,
                     openingDate: openingDate,
                     lastDried: lastDried,
-                    producer: producer,
+                    producer: producerObj,
                 },
-                usedFilament: +weight,
+                usedFilament: +weight - +producerObj.emptyWeight,
             },
         });
 
@@ -136,7 +138,7 @@ function TagInfo({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                'apiKey': route.params.mongoDbApiKey,
+                apiKey: route.params.mongoDbApiKey,
             },
             data: data,
         };
