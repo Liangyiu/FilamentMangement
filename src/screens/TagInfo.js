@@ -106,7 +106,7 @@ function TagInfo({ navigation, route }) {
         };
 
         try {
-            return await axios(config);
+            await axios(config);
         } catch (e) {
             console.log(e);
         }
