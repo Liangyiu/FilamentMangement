@@ -153,7 +153,7 @@ function UpdateFilament({ navigation, route }) {
                     lastDried: lastDried,
                     producer: producer,
                 },
-                usedFilament: +oldData.weight - +weight,
+                filamentUsed: +oldData.weight - +weight,
             },
         });
 
