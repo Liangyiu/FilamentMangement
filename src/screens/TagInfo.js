@@ -128,7 +128,7 @@ function TagInfo({ navigation, route }) {
                     lastDried: lastDried,
                     producer: producerObj,
                 },
-                usedFilament: +weight - +producerObj.emptyWeight,
+                filamentUsed: +weight - +producerObj.emptyWeight,
             },
         });
 
