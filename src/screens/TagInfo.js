@@ -85,7 +85,7 @@ function TagInfo({ navigation, route }) {
     };
 
     const deleteTagInfo = async () => {
-        const data = JSON.stringify({
+        let data = JSON.stringify({
             collection: 'stock',
             database: 'filament-management',
             dataSource: 'Cluster0',
@@ -94,13 +94,13 @@ function TagInfo({ navigation, route }) {
             },
         });
 
-        const config = {
+        let config = {
             method: 'post',
             url: `${route.params.mongoDb}/action/deleteOne`,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                apiKey: route.params.mongoDbApiKey,
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };
@@ -138,7 +138,7 @@ function TagInfo({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                apiKey: route.params.mongoDbApiKey,
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };
