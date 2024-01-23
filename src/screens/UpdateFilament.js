@@ -115,7 +115,7 @@ function UpdateFilament({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                apiKey: route.params.mongoDbApiKey,
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };
@@ -163,7 +163,7 @@ function UpdateFilament({ navigation, route }) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Request-Headers': '*',
-                apiKey: route.params.mongoDbApiKey,
+                'apiKey': route.params.mongoDbApiKey,
             },
             data: data,
         };
